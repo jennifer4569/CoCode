@@ -1,2 +1,2 @@
 # CoCode
-A code editor with special attention to source control, with easier management for merge conflicts.
+CoCode aims to solve every GitHub user’s favorite issue: the merge conflict. In a general sense, CoCode is a code editor that attempts to streamline version control in a more intuitive way. By incorporating a graphical interface, we intend to simplify the version control procedure so that it takes up as little time as possible. In the future, we hope to expand CoCode with more group-oriented features, such as live code editing, roles and permissions, and in-app compilation and code execution.
