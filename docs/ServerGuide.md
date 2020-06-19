@@ -18,4 +18,5 @@ For the server, we used DigitalOcean.
 # Useful Commands
 
 Uploading a file to the server (NOTE: This command only works in Mac/Linux, as well as WSL):
+
 `rsync -avz path/to/upload/file <username>@<ipaddress>:path/to/destination`
