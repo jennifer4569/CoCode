@@ -11,7 +11,7 @@ For the server, we used DigitalOcean.
 
 # Connecting to the Server
 
-1. To connect to the server, run the command `ssh <ip address>`. This should be on the top left corner on the droplet (labeled ipv4).
+1. To connect to the server, run the command `ssh <username>@<ip address>`. The IP address should be on the top left corner on the droplet (labeled ipv4).
 1. Enter the password.
 1. Depending on the server permissions, you may need to set up SSH keys to access it.
 
