@@ -23,7 +23,7 @@ For the server, we used DigitalOcean.
 
 # User Management (Adding/Deleting Users)
 
-1. To add new users, run `adduser --home /home/<new user> <new user>`. This will set the new user to only have write permissions to their home directory (/home/<new user>).
+1. To add new users, run `adduser --home /home/<new user> <new user>`. This will set the new user to only have write permissions to their home directory (/home/\<new user\>).
 1. To set it so that only that user has access to their home directory, run `chmod 0750 /home/<new user>`.
    - To make this the default behavior, open /etc/adduser.conf, and change the line `DIR_MODE=0755` to `DIR_MODE=0750`
 1. To delete a user and its home directory, run `deluser --remove-home <user>`.
@@ -33,4 +33,4 @@ For the server, we used DigitalOcean.
 Uploading a file to the server (NOTE: This command only works in Mac/Linux, as well as WSL):
 `rsync -avz path/to/upload/file <username>@<ipaddress>:path/to/destination`
 
-Switching users (from <user1> to <user2>) `su <user2>`
+Switching users (from \<user1\> to \<user2\>) `su <user2>`
