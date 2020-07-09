@@ -1,0 +1,6 @@
+*.exe
+*.out
+
+*~
+
+server_login.txt
