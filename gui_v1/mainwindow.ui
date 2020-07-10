@@ -81,16 +81,28 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/new.png</normaloff>img/new.png</iconset>
+   </property>
    <property name="text">
     <string>New</string>
    </property>
   </action>
   <action name="actionOpen_File">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/open.png</normaloff>img/open.png</iconset>
+   </property>
    <property name="text">
     <string>Open File</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/save.png</normaloff>img/save.png</iconset>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
@@ -101,11 +113,19 @@
    </property>
   </action>
   <action name="actionPrint">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/print.png</normaloff>img/print.png</iconset>
+   </property>
    <property name="text">
     <string>Print</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/exit.png</normaloff>img/exit.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
