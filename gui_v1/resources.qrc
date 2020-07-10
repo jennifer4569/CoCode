@@ -1,3 +1,11 @@
 <RCC>
     <qresource prefix="/images"/>
+    <qresource prefix="/rec"/>
+    <qresource prefix="/">
+        <file>img/exit.png</file>
+        <file>img/new.png</file>
+        <file>img/open.png</file>
+        <file>img/print.png</file>
+        <file>img/save.png</file>
+    </qresource>
 </RCC>
