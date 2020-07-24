@@ -17,7 +17,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionNew_triggered()
 {
     currentFile.clear();
-    ui->textEdit->setText(QString());
+    ui->plainTextEdit->setPlainText(QString());
 }
 
 void MainWindow::on_actionOpen_File_triggered()
@@ -32,7 +32,7 @@ void MainWindow::on_actionOpen_File_triggered()
     setWindowTitle(fileName);
     QTextStream in(&file);
     QString text = in.readAll();
-    ui->textEdit->setText(text);
+    ui->plainTextEdit->setPlainText(text);
     file.close();
 }
 
@@ -47,7 +47,7 @@ void MainWindow::on_actionSave_As_triggered()
     currentFile = fileName;
     setWindowTitle(fileName);
     QTextStream out(&file);
-    QString text = ui->textEdit->toPlainText();
+    QString text = ui->plainTextEdit->toPlainText();
     out << text;
     file.close();
 }
@@ -61,7 +61,7 @@ void MainWindow::on_actionPrint_triggered()
         QMessageBox::warning(this, "Warning","Cannot Access Printer");
         return;
     }
-    ui->textEdit->print(&printer);
+    ui->plainTextEdit->print(&printer);
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -71,29 +71,29 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionCopy_triggered()
 {
-    ui->textEdit->copy();
+    ui->plainTextEdit->copy();
 }
 
 
 void MainWindow::on_actionPaste_triggered()
 {
-    ui->textEdit->paste();
+    ui->plainTextEdit->paste();
 }
 
 
 void MainWindow::on_actionCut_triggered()
 {
-    ui->textEdit->cut();
+    ui->plainTextEdit->cut();
 }
 
 void MainWindow::on_actionUndo_triggered()
 {
-    ui->textEdit->undo();
+    ui->plainTextEdit->undo();
 }
 
 void MainWindow::on_actionRedo_triggered()
 {
-    ui->textEdit->redo();
+    ui->plainTextEdit->redo();
 }
 
 void MainWindow::on_actionSave_triggered()
@@ -107,7 +107,7 @@ void MainWindow::on_actionSave_triggered()
     currentFile = fileName;
     setWindowTitle(fileName);
     QTextStream out(&file);
-    QString text = ui->textEdit->toPlainText();
+    QString text = ui->plainTextEdit->toPlainText();
     out << text;
     file.close();
 }
