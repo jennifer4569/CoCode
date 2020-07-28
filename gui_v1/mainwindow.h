@@ -10,6 +10,9 @@
 #include <QMessageBox>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QFileSystemModel>
+#include <QtCore>
+#include <QtGui>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -49,5 +52,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";
+
+    QFileSystemModel *model;
 };
 #endif // MAINWINDOW_H

@@ -6,6 +6,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    model = new QFileSystemModel(this);
+    model->setReadOnly(false);
+    model->setRootPath(QDir::currentPath());
+
+    ui->treeView->setModel(model);
 }
 
 MainWindow::~MainWindow()

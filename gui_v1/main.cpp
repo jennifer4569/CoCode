@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QFileSystemModel>
+#include <QTreeView>
 
 int main(int argc, char *argv[])
 {
