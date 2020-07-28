@@ -39,8 +39,11 @@
     <property name="fieldGrowthPolicy">
      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
     </property>
+    <item row="0" column="0">
+     <widget class="QTreeView" name="treeView"/>
+    </item>
     <item row="0" column="1">
-     <widget class="QPlainTextEdit" name="plainTextEdit">
+     <widget class="CoCode" name="plainTextEdit">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -57,9 +60,6 @@
        <enum>Qt::StrongFocus</enum>
       </property>
      </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QTreeView" name="treeView"/>
     </item>
    </layout>
   </widget>
@@ -239,6 +239,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CoCode</class>
+   <extends>QPlainTextEdit</extends>
+   <header>cocode.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>
