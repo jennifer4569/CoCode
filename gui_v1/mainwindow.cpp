@@ -8,10 +8,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     model = new QFileSystemModel(this);
+    model->setRootPath("C:/");
+
     model->setReadOnly(false);
-    model->setRootPath(QDir::currentPath());
 
     ui->treeView->setModel(model);
+    ui->treeView->setRootIndex(model->setRootPath("./"));
 }
 
 MainWindow::~MainWindow()
