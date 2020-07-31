@@ -2,6 +2,8 @@
 #include <sqlite3.h>
 #include <vector>
 #include <string.h>
+
+#define MAX_USERS 2
 //install with sudo apt-get install sqlite3 libsqlite3-dev
 //compile with -l sqlite3
   
@@ -12,11 +14,11 @@ struct sql_data{
 
 static int callback(void* data, int argc, char** argv, char** azColName){
   sql_data* retData = (sql_data*)data;
+  retData->data.clear();
   if(argc == 0)
     retData->receivedData = false;
   else{
     retData->receivedData = true;
-    retData->data.clear();
     for(int i = 0; i < argc; i++){
       //sprintf(tmp, "%s = %s\n", azColName[i], argv[i]? argv[i]: "NULL");
       const char* tmp;
@@ -79,14 +81,24 @@ int main(int argc, char** argv){
     return EXIT_FAILURE;
   }
 
-  //command = "SELECT * FROM USERS;";
+  command = "SELECT COUNT(*) FROM USERS;";
+  if(sqlite3_exec(db, command.c_str(), callback, retData, &messageError) != SQLITE_OK){
+    std::cerr << "Error: " << messageError << std::endl;
+    sqlite3_free(messageError);
+  }
+
+  if(retData->data.size() > 0 && *retData->data[0] >= MAX_USERS){
+    std::cerr << "Error: Maximum users exceeded!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  
   command  = "SELECT username FROM USERS WHERE username=";
   command += "'" + username + "';";
   if(sqlite3_exec(db, command.c_str(), callback, retData, &messageError) != SQLITE_OK){
     std::cerr << "Error: " << messageError << std::endl;
     sqlite3_free(messageError);
   }
-  if(retData->receivedData && retData->data.size() > 0 && strcmp(retData->data[0], "VARCHAR(255)") != 0){
+  if(retData->receivedData && retData->data.size() > 0 && strcmp(retData->data[0], username.c_str()) == 0){
     std::cerr << "Error: Username already in use!" << std::endl;
     for(int i = 0; i < retData->data.size(); i++){
       std::cout << retData->data[i] << std::endl;

@@ -100,7 +100,7 @@ int main()
     hints.ai_family = AF_INET;      // IPv4
     hints.ai_socktype = SOCK_STREAM;  // TCP stream sockets
 
-    const std::string name = "127.0.0.1";   // localhost for testing
+    const std::string name = "161.35.48.64";//"127.0.0.1";   // localhost for testing
 
     // get ready to connect
     if (getaddrinfo(name.c_str(), port.c_str(), &hints, &client_info) != 0)
