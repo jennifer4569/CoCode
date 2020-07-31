@@ -5,10 +5,15 @@ Make sure you specify which WinSock version you wish to use:
 #define SCK_VERSION2 0x0202
 
 # Necessary Header Files
-#include <sys/types.h>
+## Linux Headers
+#include <sys/types.h>  
 #include <sys/socket.h>  
 #include <netinet/in.h>  
-#include <netinet/ip.h> /* superset of previous */
+#include <netinet/ip.h> (superset of previous)  
+#include <arpa/inet.h>  
+#include <netdb.h>  
+## Windows Headers
+#include <windows.h>
 
 # Arguments for each type of socket
 tcp_socket = socket(AF_INET, SOCK_STREAM, 0);  
@@ -20,25 +25,35 @@ of the packets between them and as such will reliably send/receive files whereas
 udp does not verify the data and the files being sent may get corrupted.  
 For version control, tcp should be used as udp does not guarentee that old files will be sent properly to the user.
 
-# Socket Structure
+# C Structs
+struct addrinfo {  
+- int              ai_flags;  
+- int              ai_family;  
+- int              ai_socktype;  
+- int              ai_protocol;  
+- socklen_t        ai_addrlen;  
+- struct sockaddr \*ai_addr;  
+- char            \*ai_canonname;  
+- struct addrinfo \*ai_next;  
+};  
+
+The following structs are not as important as all of their information is  
+encapsulated by addrinfo after calling getaddrinfo().
+
 struct sockaddr_in {  
-short sin_family; (address family)  
-in_port_t sin_port; (port in network byte order)  
-struct in_addr sin_addr; (ip address)  
+- short sin_family; (address family)  
+- in_port_t sin_port; (port in network byte order)  
+- struct in_addr sin_addr; (ip address)  
 
 struct in_addr {  
 uint32_t s_addr; (address in network byte order)  
 };
 
-# Socket Functions
-uint16_t htons(uint16_t hostshort) - converts "host byte order" to "network byte order"  
-uint16_t ntohs(uint16_t hostshort) - vice versa   
+# Functions
+**getaddrinfo**(address, port number, addrinfo \* hints, addrinfo \*\* res)  
+Gets the information from the given address and socket criteria in hints and stores the results in res
 
-int inet_aton(char *cp, struct in_addr *inp)  
-Converts the Internet host address cp from the IPv4
-numbers-and-dots notation into binary form (in network byte order) and stores it in the structure that inp points to.  
-Returns 1 if the supplied string was successfully interpreted, or 0 if the string is invalid
-
+## Socket Functions
 int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen); - binds addr to sockfd
 
 int listen(int sockfd, int backlog)  
@@ -59,3 +74,14 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) - initia
 Returns 0 on success and -1 on error.  
 
 sockets can be closed with close() like any other file descriptor.
+
+## Network Functions
+uint16_t htons(uint16_t hostshort) - converts "host byte order" to "network byte order"  
+uint16_t ntohs(uint16_t hostshort) - vice versa   
+
+int inet_aton(char *cp, struct in_addr *inp)  
+Converts the Internet host address cp from the IPv4
+numbers-and-dots notation into binary form (in network byte order) and stores it in the structure that inp points to.  
+Returns 1 if the supplied string was successfully interpreted, or 0 if the string is invalid
+
+
