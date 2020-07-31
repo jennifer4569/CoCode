@@ -27,6 +27,7 @@ For the server, we used DigitalOcean.
 1. To set it so that only that user has access to their home directory, run `chmod 0750 /home/<new user>`.
    - To make this the default behavior, open /etc/adduser.conf, and change the line `DIR_MODE=0755` to `DIR_MODE=0750`
 1. To delete a user and its home directory, run `deluser --remove-home <user>`.
+1. To change a password, run `passwd`. To change a specific user's password, run `passwd <user>`.
 
 # Useful Commands
 
@@ -34,3 +35,14 @@ Uploading a file to the server (NOTE: This command only works in Mac/Linux, as w
 `rsync -avz path/to/upload/file <username>@<ipaddress>:path/to/destination`
 
 Switching users (from \<user1\> to \<user2\>) `su <user2>`
+
+Killing a process occupying a certain port: `sudo fuser -k <port_number>/tcp`
+
+# Allowing Clients Connect to Server
+
+First, set up an ssh key (See above).
+Then, in the server, run `sudo ufw allow ssh`
+This will allow the client to connect to the server using the designated port.
+
+
+
