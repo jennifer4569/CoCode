@@ -3,7 +3,7 @@
 
 
 #include <QMainWindow>
-
+#include <syntax_highlighter.h>
 #include<QFile>
 #include<QFileDialog>
 #include <QTextStream>
@@ -53,10 +53,12 @@ private slots:
 
     void on_tabWidget_tabCloseRequested(int index);
 
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";
-
+    syntax_highlighter *highlighter;
     QFileSystemModel *model;
 };
 #endif // MAINWINDOW_H

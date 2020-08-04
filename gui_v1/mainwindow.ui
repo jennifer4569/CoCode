@@ -56,6 +56,16 @@
         <attribute name="title">
          <string>Tab 1</string>
         </attribute>
+        <widget class="CoCode" name="plainTextEdit">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>104</width>
+           <height>70</height>
+          </rect>
+         </property>
+        </widget>
        </widget>
       </widget>
      </widget>
@@ -244,6 +254,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CoCode</class>
+   <extends>QPlainTextEdit</extends>
+   <header>cocode.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>
