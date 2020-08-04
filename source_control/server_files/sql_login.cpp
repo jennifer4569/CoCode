@@ -2,6 +2,9 @@
 #include <sqlite3.h>
 #include <vector>
 #include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #define MAX_USERS 2
 //install with sudo apt-get install sqlite3 libsqlite3-dev
@@ -43,6 +46,14 @@ bool valid(std::string str){
     }
   }
   return true;
+}
+//from https://stackoverflow.com/questions/47068948/best-practice-to-use-execvp-in-c
+template <std::size_t N>
+int execvp(const char* file, const char* const (&argv)[N])
+{
+  //assert((N > 0) && (argv[N - 1] == nullptr));
+
+  return execvp(file, const_cast<char* const*>(argv));
 }
 
 int main(int argc, char** argv){
@@ -87,7 +98,9 @@ int main(int argc, char** argv){
     sqlite3_free(messageError);
   }
 
-  if(retData->data.size() > 0 && *retData->data[0] >= MAX_USERS){
+  if(retData->data.size() > 0 && atoi(retData->data[0]) >= MAX_USERS){
+    std::cout << atoi(retData->data[0]) << " >= " << MAX_USERS << std::endl;
+    
     std::cerr << "Error: Maximum users exceeded!" << std::endl;
     return EXIT_FAILURE;
   }
@@ -115,8 +128,27 @@ int main(int argc, char** argv){
     sqlite3_free(messageError);
   }
   else{
-    std::cout << "Success: Added user " << username << std::endl;
+    int f = fork();
+    if(f == 0){
+      const char* const a[] = {"bash", "./register_user.sh", username.c_str(), password.c_str(), nullptr};
+      execvp(a[0], a);
+      std::cerr << "Error: Couldn't add user " << username << std::endl;
+      command = "DELETE FROM USERS WHERE username='"+username+"';";
+      if(sqlite3_exec(db, command.c_str(), NULL, 0, &messageError) != SQLITE_OK){
+	std::cerr << "Error: " << messageError << std::endl;
+	sqlite3_free(messageError);
+      }
+      return EXIT_FAILURE;
+    }
+    else{
+      int status;
+      waitpid(f, &status, 0);
+      if(status ==  EXIT_SUCCESS){
+	std::cout << "Success: Added user " << username << std::endl;
+      }
+    }
   }
+  
   free(retData);
   sqlite3_close(db);
   return EXIT_SUCCESS;
