@@ -42,22 +42,21 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QTreeView" name="treeView"/>
-      <widget class="CoCode" name="plainTextEdit">
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
+       <property name="tabsClosable">
+        <bool>true</bool>
        </property>
-       <property name="focusPolicy">
-        <enum>Qt::StrongFocus</enum>
+       <property name="movable">
+        <bool>true</bool>
        </property>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Tab 1</string>
+        </attribute>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -69,7 +68,7 @@
      <x>0</x>
      <y>0</y>
      <width>438</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -79,6 +78,7 @@
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionNew"/>
+    <addaction name="actionNew_File"/>
     <addaction name="actionOpen_File"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
@@ -238,14 +238,12 @@
     <string>Commit</string>
    </property>
   </action>
+  <action name="actionNew_File">
+   <property name="text">
+    <string>New File</string>
+   </property>
+  </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>CoCode</class>
-   <extends>QPlainTextEdit</extends>
-   <header>cocode.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>
