@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define MAX_USERS 2
+#define MAX_USERS 10
 //install with sudo apt-get install sqlite3 libsqlite3-dev
 //compile with -l sqlite3
   
