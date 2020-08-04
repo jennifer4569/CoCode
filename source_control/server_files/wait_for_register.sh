@@ -2,6 +2,7 @@
 #in /root/
 
 CMD="/home/shared/"
+FILE="/home/shared/user_credentials"
 
 mkdir -p "CMD"
 
@@ -10,6 +11,7 @@ while :
 do
     inotifywait -q -e moved_to "$CMD" >/dev/null
 
+    echo "Detected request"
     user="olduser"
     pass="oldpass"
 

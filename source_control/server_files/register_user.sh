@@ -11,7 +11,10 @@ then
     pass=$2
     sudo adduser $user --gecos ",,," --disabled-password
     echo $user":"$pass | sudo chpasswd
+    setfacl -m u:$user:--- /bin/chmod
+    setfacl -m u:$user:--- /usr/bin/g++
     echo "Registered user: " $user
+
 else
 	if [ -f $FILE ]
 	then
@@ -32,7 +35,7 @@ else
 			
 			sudo adduser $user --gecos ",,," --disabled-password
 			echo $user":"$pass | sudo chpasswd
-
+			setfacl -m u:$user:--- /bin/chmod
 			#deletes user_credentials once done
 			rm -rf $FILE
 		    fi
