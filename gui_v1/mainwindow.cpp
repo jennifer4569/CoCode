@@ -199,6 +199,10 @@ void MainWindow::on_tabWidget_currentChanged(int index)
     }
     else if(index==0){
         //seg faults here for some reason
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget= ui->tabWidget->widget(index);
+        pTextEdit = (CoCode*) pWidget;
+        highlighter = new syntax_highlighter(pTextEdit->document());
        /* if(ui->tabWidget->widget(index)!=NULL){
             CoCode* pTextEdit = NULL;
             QWidget* pWidget= ui->tabWidget->widget(index);

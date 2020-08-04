@@ -13,6 +13,7 @@
 #include <QFileSystemModel>
 #include <QtCore>
 #include <QtGui>
+#include <QPointer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -58,7 +59,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";
-    syntax_highlighter *highlighter;
+    QPointer<syntax_highlighter> highlighter;
     QFileSystemModel *model;
 };
 #endif // MAINWINDOW_H
