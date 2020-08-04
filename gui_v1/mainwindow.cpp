@@ -10,6 +10,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
     ui->tabWidget->addTab(new CoCode(),"untitled");
 
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    highlighter = new syntax_highlighter(pTextEdit->document());
+
     model = new QFileSystemModel(this);
     model->setRootPath("C:/");
 
@@ -50,6 +55,7 @@ void MainWindow::on_actionOpen_File_triggered()
         QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
         pTextEdit = (CoCode*) pWidget;
         pTextEdit->setPlainText(text);
+        highlighter->setDocument(pTextEdit->document());
     }
     else{
         //add tab
@@ -60,6 +66,7 @@ void MainWindow::on_actionOpen_File_triggered()
         QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
         pTextEdit = (CoCode*) pWidget;
         pTextEdit->setPlainText(text);
+        highlighter->setDocument(pTextEdit->document());
     }
     file.close();
 }
@@ -171,9 +178,32 @@ void MainWindow::on_actionNew_File_triggered()
 {
     ui->tabWidget->addTab(new CoCode(),"untitled");
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    highlighter->setDocument(pTextEdit->document());
 }
 
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
     ui->tabWidget->removeTab(index);
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if(index>0){
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget= ui->tabWidget->widget(index);
+        pTextEdit = (CoCode*) pWidget;
+        highlighter->setDocument(pTextEdit->document());
+    }
+    else if(index==0){
+        //seg faults here for some reason
+       /* if(ui->tabWidget->widget(index)!=NULL){
+            CoCode* pTextEdit = NULL;
+            QWidget* pWidget= ui->tabWidget->widget(index);
+            pTextEdit = (CoCode*) pWidget;
+            highlighter->setDocument(pTextEdit->document());
+        }*/
+    }
 }

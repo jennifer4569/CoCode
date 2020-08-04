@@ -18,12 +18,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     cocode.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    syntax_highlighter.cpp
 
 HEADERS += \
     cocode.h \
     linenumber.h \
-    mainwindow.h
+    mainwindow.h \
+    syntax_highlighter.h
 
 FORMS += \
     mainwindow.ui
