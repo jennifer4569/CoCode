@@ -5,7 +5,16 @@ FILE="/home/shared/user_credentials"
 user="olduser"
 pass="oldpass"
 
-if [ -f $FILE ]
+if [ $# -ge 2 ]
+then
+    user=$1
+    pass=$2
+    sudo adduser $user --gecos ",,," --disabled-password
+    echo $user":"$pass | sudo chpasswd
+    echo "Registered user: " user
+fi
+
+if [ $# -lt 2 && -f $FILE ]
 then
     i=0
 
