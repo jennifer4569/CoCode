@@ -75,7 +75,7 @@ void MainWindow::on_actionSave_As_triggered()
     currentFile = fileName;
     setWindowTitle(fileName);
     QTextStream out(&file);
-
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
     CoCode* pTextEdit = NULL;
     QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
     pTextEdit = (CoCode*) pWidget;
@@ -157,7 +157,7 @@ void MainWindow::on_actionSave_triggered()
     currentFile = fileName;
     setWindowTitle(fileName);
     QTextStream out(&file);
-
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
     CoCode* pTextEdit = NULL;
     QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
     pTextEdit = (CoCode*) pWidget;

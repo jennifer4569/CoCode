@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.12.3, 2020-08-04T13:02:05. -->
+<!-- Written by QtCreator 4.12.3, 2020-08-04T13:22:37. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -308,9 +308,8 @@
     </valuelist>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">gui_v12</value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/senfr/Documents/CoCode/repo_copy/CoCode/gui_v1/gui_v1.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/senfr/Documents/CoCode/repo_copy/CoCode/gui_v1/gui_v1.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/senfr/Documents/CoCode/remote_repo/CoCode/gui_v1/gui_v1.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/senfr/Documents/CoCode/remote_repo/CoCode/gui_v1/gui_v1.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
