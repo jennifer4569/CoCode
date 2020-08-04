@@ -9,7 +9,9 @@ mkdir -p "CMD"
 #waits until a file is moved to the $CMD directory, before calling register_user.sh
 while :
 do
-    inotifywait -q -e moved_to "$CMD" >/dev/null
+    #inotifywait -q -e moved_to "$CMD" >/dev/null
+    inotifywait -q -e modify -e moved_to "$CMD" >/dev/null
+    #inotifywait -q -e modify "$CMD" >/dev/null
 
     echo "Detected request"
     user="olduser"
