@@ -13,6 +13,8 @@ then
     echo $user":"$pass | sudo chpasswd
     setfacl -m u:$user:--- /bin/chmod
     setfacl -m u:$user:--- /usr/bin/g++
+    setfacl -m u:$user:--- /bin/kill
+    setfacl -m u:$user:--- /bin/rm
     echo "Registered user: " $user
 
 else
