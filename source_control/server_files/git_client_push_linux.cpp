@@ -1,4 +1,4 @@
-// git_client_linux
+// git_client_push_linux
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -46,83 +46,35 @@ if (!outfile.good()) {
 outfile << infile.rdbuf();
 */
 
-/* Download a file from the server and save it in a directory specified by dir */
-bool download_file(int sd, const std::string & filename, const std::string & dir = "./")
-{
-    // open a new file with the same name in a specific folder
-    std::string path = dir;
-    if (dir.back() != '/') path += '/';
-    path += filename;
-
-    std::ofstream outfile(path);
-    if (!outfile.good())
-    {
-        std::cerr << "Can't open " << filename << " to read.\n";
-        return false;
-    }
-
-    std::cout << "SERVER: Downloading file " << filename << std::endl;
-
-    send(sd, " ", strlen(" "), 0);
-
-    int n;
-    do
-    {
-        char buffer[BUFFER_SIZE];
-
-        send(sd, " ", 1, 0);     // send blank message to undo block from client
-        n = recv(sd, buffer, BUFFER_SIZE, 0);
-        buffer[n] = '\0';
-
-        std::cout << "SERVER: " << buffer << std::endl;
-
-        if (n == -1)
-        {
-            std::cerr << "recv() failed!\n";
-            return false;
-        }
-        else if (n == 0)
-        {
-            std::cout << "SERVER: File read complete.\n";
-        }
-        else
-        {
-            outfile << buffer;
-        }
-    } while (n > 0);
-
-    outfile.close();
-    return true;
-}
-
 // Sends a file with the given filename from the directory specified in dir to the server
 bool upload_file(int sd, const std::string & filename, const std::string dir = "./") {
-    std::string word;
+    std::string word, path = dir;
+    std::ifstream infile;
     char buffer[BUFFER_SIZE];
+    int n;
 
-    std::string path = dir;
     if (dir.back() != '/') path += '/';
     path += filename;
 
-    std::ifstream infile(dir + filename);
+    infile = std::ifstream(dir + filename);
     if (!infile.good())
     {
         std::cerr << "Can't open " << filename << " to read.\n";
         return false;
     }
 
-    // Notify the server a file is being sent.
-    send(sd, "FILE", std::strlen("FILE"), 0);
+    // Notify the server a file is being uploaded.
+    send(sd, "UPLOAD", strlen("UPLOAD"), 0);
 
     // Wait for the server to read before sending more data.
-    int n = recv(sd, buffer, strlen("FILE found"), 0);
+    n = recv(sd, buffer, strlen("UPLOAD found"), 0);
     buffer[n] = '\0';
 
+    // Send the name of the file
     send(sd, filename.c_str(), filename.size(), 0);
     assert(recv(sd, buffer, BUFFER_SIZE, 0) > 0);
 
     // Send the contents of the file into the client socket
-    
     while (infile.getline(buffer, BUFFER_SIZE))
     {
         if (send(sd, buffer, strlen(buffer), MSG_MORE) < 0)
@@ -130,11 +82,12 @@ bool upload_file(int sd, const std::string & filename, const std::string dir = "
             std::cerr << "send() failed\n";
             return false;
         }
-        // send a new line until the getline() reaches eof.
+        // send a new line until getline() reaches eof.
         if (!infile.eof()) send(sd, "\n", strlen("\n"), 0);
         assert(recv(sd, buffer, 1, 0) > 0);
     }
     infile.close();
+    std::cout << "File successfully sent to server.\n";
     return true;
 }
 
@@ -173,30 +126,12 @@ int main()
         return EXIT_FAILURE;
     }
     
-    if (upload_file(sd, "copypasta.txt", "./test_client_repo/"))
-    {
-        std::cout << "File successfully sent to server.\n";
-    }
-    else
+    if (!upload_file(sd, "copypasta.txt", "./test_client_repo/"))
     {
         std::cerr << "Failed to send file.\n";
         return EXIT_FAILURE;
     }
     
-    /*
-    std::string test = "copypasta.txt";
-    if (download_file(sd, test, "./test_client_repo"))
-    {
-        std::cout << "File " << test << "successfully downloaded.\n";
-    }
-    else
-    {
-        std::cerr << "Failed to download file.\n";
-        return EXIT_FAILURE;
-    }
-    */
-
-    sleep(2);
     close(sd);
     freeaddrinfo(client_info);
 
