@@ -58,6 +58,12 @@ int execvp(const char* file, const char* const (&argv)[N])
 }
 
 bool validate_credentials(std::string username, std::string password){
+  sqlite3* db;
+  if(sqlite3_open("login.db", &db)){
+    std::cerr << "Error opening database: " << sqlite3_errmsg(db) << std::endl;
+    return false;
+  }
+  
   
   std::string command;
   char* messageError;
