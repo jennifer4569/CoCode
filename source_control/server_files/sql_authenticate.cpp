@@ -65,11 +65,29 @@ bool validate_credentials(std::string username, std::string password){
   }
   if(!valid(username) || !valid(password))
     return false;
-  
+
+  //creates table if it does not exist
   std::string command;
   char* messageError;
   sql_data* retData = (sql_data*) calloc(1, sizeof(sql_data));
+  command = "SELECT name FROM sqlite_master WHERE type='table' AND name='USERS';";
+  if(sqlite3_exec(db, command.c_str(), callback, retData, &messageError) != SQLITE_OK){
+    std::cerr << "Error: " << messageError << std::endl;
+    sqlite3_free(messageError);
+  }
+  if(!retData->receivedData){
+    command  = "  CREATE TABLE USERS(";
+    command += "    username VARCHAR(255) PRIMARY KEY NOT NULL,"; //string of maxlength 255 chars
+    command += "    password VARCHAR(255) NOT NULL";
+    command += "  );";
+    //must use c styled string
+    if(sqlite3_exec(db, command.c_str(), NULL, 0, &messageError) != SQLITE_OK){
+      std::cerr << "Error creating table: " << messageError << std::endl;
+      sqlite3_free(messageError);
+    }
+  }
 
+  //authenticates user
   command  = "SELECT COUNT(*) FROM USERS WHERE ";
   command += "username='" + username + "' AND ";
   command += "password='" + password + "';";
