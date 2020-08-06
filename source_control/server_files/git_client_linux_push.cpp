@@ -51,7 +51,6 @@ bool upload_file(int sd, const std::string & filename) {
 
     // Notify the server a file is being sent.
     send(sd, "FILE", std::strlen("FILE"), 0);
-
     // Wait for the server to read before sending more data.
     int n = recv(sd, buffer, strlen("FILE found"), 0);
 
@@ -163,7 +162,7 @@ int main(int argc, char** argv)
     n = recv(sd, buffer, strlen("succes"), 0);
                                //failed
     buffer[n] = '\0';
-    if(strcmp(buffer, "failed")){
+    if(strcmp(buffer, "failed") == 0){
       std::cerr << "Error: Incorrect login credentials!" <<std::endl;
       return EXIT_FAILURE;
     }
