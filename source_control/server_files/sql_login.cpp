@@ -39,6 +39,7 @@ static int callback(void* data, int argc, char** argv, char** azColName){
 }
 
 bool valid(std::string str){
+  if(str.length() >= 30) return false;
   for(int i = 0; i < str.length(); i++){
     if(!isalnum(str[i])){
       //maybe allow certain special characters here but idk
@@ -56,17 +57,39 @@ int execvp(const char* file, const char* const (&argv)[N])
   return execvp(file, const_cast<char* const*>(argv));
 }
 
+bool validate_credentials(std::string username, std::string password){
+  
+  std::string command;
+  char* messageError;
+  sql_data* retData = (sql_data*) calloc(1, sizeof(sql_data));
+
+  command  = "SELECT COUNT(*) FROM USERS WHERE ";
+  command += "username='" + username + "' AND ";
+  command += "password='" + password + "';";
+
+  if(sqlite3_exec(db, command.c_str(), callback, retData, &messageError) != SQLITE_OK){
+    std::cerr << "Error: " << messageError << std::endl;
+    sqlite3_free(messageError);
+  }
+  
+  if(retData->data.size() > 0 && atoi(retData->data[0]) > 0){
+    free(retData);
+    return true;
+  }
+  free(retData);
+  return false;
+}
+
 int main(int argc, char** argv){
   sqlite3* db;
   if(sqlite3_open("login.db", &db)){
     std::cerr << "Error opening database: " << sqlite3_errmsg(db) << std::endl;
     return EXIT_FAILURE;
   }
+  
+  //creates table if it does not exist
   std::string command;
   char* messageError;
-  //command =  "IF (EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES";
-  //command += "          WHERE TABLE_NAME = 'USERS'))";
-
   sql_data* retData = (sql_data*) calloc(1, sizeof(sql_data));
   command = "SELECT name FROM sqlite_master WHERE type='table' AND name='USERS';";
   if(sqlite3_exec(db, command.c_str(), callback, retData, &messageError) != SQLITE_OK){
@@ -85,6 +108,7 @@ int main(int argc, char** argv){
     }
   }
 
+  //attempts to add user
   std::string username = std::string(argv[1]);
   std::string password = std::string(argv[2]);
   if(!valid(username) || !valid(password)){
