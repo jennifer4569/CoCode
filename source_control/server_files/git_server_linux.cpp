@@ -1,13 +1,18 @@
+// git_server_linux
 #include <iostream>
 #include <fstream>
 #include <string>
+//#include <filesystem>     // C++17
 
+// C headers
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 
 // Linux Headers
+#include <dirent.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/types.h>
@@ -27,30 +32,68 @@
     struct hostent * hp = gethostbyname( "::1" );  // IPv6
 #endif
 
-bool download_file(int sd, const std::string & filename)
+/* Download a file from a client socket into a directory in dir
+Default directory is the current working directory */
+bool download_file(int sd)
 {
-    // open a new file with the same name in a specific folder
-    std::ofstream outfile("./server_test_files/" + filename);
+    std::string filename, dir, path;
+    std::ofstream outfile;
+    char buffer[BUFFER_SIZE];
+    int n;
+
+    // Notify the client the command 'UPLOAD' has been received.
+    send(sd, "UPLOAD found", strlen("UPLOAD found"), 0);
+
+    /* Get the file name and directory to determine which file will be
+       sent to the client. */
+    n = recv(sd, buffer, BUFFER_SIZE - 1, 0);
+    if (n == -1)
+    {
+        std::cerr << "recv() failed\n";
+        return false;
+    }
+    else if (n == 0)
+    {
+        std::cerr << "missing file name\n";
+        return false;
+    }
+    buffer[n] = '\0';
+    send(sd, " ", 1, 0);     // send blank message to undo block from client
+    filename = std::string(buffer);
+    
+    n = recv(sd, buffer, BUFFER_SIZE - 1, 0);
+    if (n == -1)
+    {
+        std::cerr << "recv() failed\n";
+        return false;
+    }
+    else if (n == 0)
+    {
+        std::cerr << "missing directory\n";
+        return false;
+    }
+    buffer[n] = '\0';
+    send(sd, " ", 1, 0);
+    dir = std::string(buffer);
+
+    path = dir;
+    if (dir.back() != '/') path += '/';
+    path += filename;
+
+    filename = buffer;
+    std::cout << "SERVER: Downloading file " << filename << std::endl;
+
+    outfile = std::ofstream(path);
     if (!outfile.good())
     {
         std::cerr << "Can't open " << filename << " to read.\n";
         return false;
     }
 
-    std::cout << "SERVER: Downloading file " << filename << std::endl;
-
-    send(sd, " ", strlen(" "), 0);
-
-    int n;
     do
     {
-        char buffer[BUFFER_SIZE];
-
-        send(sd, " ", 1, 0);     // send blank message to undo block from client
         n = recv(sd, buffer, BUFFER_SIZE, 0);
         buffer[n] = '\0';
-
-        std::cout << "SERVER: " << buffer << std::endl;
 
         if (n == -1)
         {
@@ -63,17 +106,187 @@ bool download_file(int sd, const std::string & filename)
         }
         else
         {
+            std::cout << "SERVER: " << buffer;
             outfile << buffer;
         }
+
+        send(sd, " ", 1, 0);
     } while (n > 0);
 
     outfile.close();
     return true;
 }
 
+// Sends a file with the given filename from the directory specified in dir to the server
+void upload_file(int sd) {
+    std::string word, filename, dir, path;
+    std::ifstream infile;
+    char buffer[BUFFER_SIZE];
+    int n;
+
+    // Notify the client the command 'DOWNLOAD' has been received.
+    send(sd, "DOWNLOAD found", strlen("DOWNLOAD found"), 0);
+    
+    /* Get the file name and directory to determine which file will be
+       sent to the server. */
+    n = recv(sd, buffer, BUFFER_SIZE - 1, 0);
+    if (n == -1)
+    {
+        std::cerr << "recv() failed\n";
+        return;
+    }
+    else if (n == 0)
+    {
+        std::cerr << "missing file name\n";
+        return;
+    }
+    buffer[n] = '\0';
+    send(sd, " ", 1, 0);
+
+    filename = std::string(buffer);
+    
+    n = recv(sd, buffer, BUFFER_SIZE - 1, 0);
+    if (n == -1)
+    {
+        std::cerr << "recv() failed\n";
+        return;
+    }
+    else if (n == 0)
+    {
+        std::cerr << "missing directory\n";
+        return;
+    }
+    buffer[n] = '\0';
+
+    dir = std::string(buffer);
+
+    path = dir;
+    if (dir.back() != '/') path += '/';
+    path += filename;
+
+    std::cout << "SERVER: Opening " << path << std::endl;
+
+    infile = std::ifstream(path);
+    if (!infile.good())
+    {
+        std::cerr << "Can't open " << filename << " to read.\n";
+        return;
+    }
+
+    // Send the contents of the file into the client socket
+    
+    while (infile.getline(buffer, BUFFER_SIZE - 1))
+    {
+        if (send(sd, buffer, strlen(buffer), MSG_MORE) < 0)
+        {
+            std::cerr << "send() failed\n";
+            return;
+        }
+        // send a new line until getline() reaches end of file.
+        if (!infile.eof()) send(sd, "\n", strlen("\n"), 0);
+        assert(recv(sd, buffer, 1, 0) > 0);
+    }
+    infile.close();
+    std::cout << "File successfully sent to server.\n";
+    close(sd); // close socket to prevent both the sever and client from blocking
+}
+
+// Prints all folders and files within the given path name in pre-order DFS
+bool print_dir(std::string name)
+{
+    DIR * pdir;
+    struct dirent * dir;
+    struct stat stat_buf;
+
+    if((pdir = opendir(name.c_str())) == NULL) 
+    {
+        std::cerr << "Error: Unable to open directory\n";
+        return false;
+    }
+
+    while((dir = readdir(pdir)) != NULL)
+    {
+        // path represents the path to the file
+        std::string path = name;
+        
+        // Ensure pathname ends with '/' before adding a file/folder name
+        if(path.back() != '/') path += '/';
+        path += dir->d_name;
+
+        if (!stat(path.c_str(), &stat_buf))
+        {
+            if (S_ISDIR(stat_buf.st_mode) && path.back() != '.')
+            {
+                
+
+                // Print other folders excluding the cwd and parent directory
+                assert(print_dir(path));
+            }
+            else if (S_ISREG(stat_buf.st_mode))
+            {
+                std::cout << "File Name: " << dir->d_name << std::endl;
+                std::cout << "File Size: " << stat_buf.st_size << std::endl;
+                std::cout << "Path: " << path << std::endl;
+                std::cout << "Last Access: " << ctime(&stat_buf.st_atime) << std::endl;
+            }
+        }
+        else
+        {
+            std::cerr << "Cannot open " << path << std::endl;
+            return false;
+        }
+    }
+    closedir(pdir);
+    return true;
+}
+
+bool upload_repo(int sd, const std::string & name)
+{
+    DIR * pdir;
+    struct dirent * dir;
+    struct stat stat_buf;
+
+    if((pdir = opendir(name.c_str())) == NULL) 
+    {
+        std::cerr << "Error: Unable to open directory\n";
+        return false;
+    }
+
+    while((dir = readdir(pdir)) != NULL)
+    {
+        // path represents the path to the file
+        std::string path = name;
+        
+        // Ensure pathname ends with '/' before adding a file/folder name
+        if(path.back() != '/') path += '/';
+        path += dir->d_name;
+
+        if (!stat(path.c_str(), &stat_buf))
+        {
+            if (S_ISDIR(stat_buf.st_mode) && path.back() != '.')
+            {
+                // Create a folder
+
+                // Print other folders excluding the cwd and parent directory
+                assert(upload_repo(sd, path));
+            }
+            else if (S_ISREG(stat_buf.st_mode))
+            {
+                std::cout << "File Name: " << dir->d_name << "\n";
+                std::cout << "File Size: " << stat_buf.st_size << "\n";
+                std::cout << "Path: " << path << "\n";
+                std::cout << "Last Access: " << ctime(&stat_buf.st_atime) << std::endl;
+            }
+        }
+    }
+
+    return true;
+}
+
 int main()
 {
     const std::string port = "8123";
+    const std::string ip4 = "161.35.48.64";
 
     // Address Structures
     struct addrinfo hint, *server_info;
@@ -92,8 +305,8 @@ int main()
         std::cerr << "getaddrinfo() failed!\n";
     }
 
-    /* Create the listener socket as TCP socket (SOCK_STREAM) */
-    /* here, the sd is a socket descriptor (part of the fd table) */
+    // Create the listener socket as TCP socket (SOCK_STREAM)
+    // here, the sd is a socket descriptor (part of the fd table)
     int sd = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
     if ( sd == -1 )
     {
@@ -101,14 +314,14 @@ int main()
         return EXIT_FAILURE;
     }
 
-    /* attempt to bind (or associate) port 8123 with the socket */
+    // attempt to bind (or associate) port 8123 with the socket
     if ( bind(sd, server_info->ai_addr, server_info->ai_addrlen) == -1 )
     {
         std::perror( "bind() failed" );
         return EXIT_FAILURE;
     }
 
-    /* identify this port as a TCP listener port */
+    // identify this port as a TCP listener port
     if ( listen( sd, 5 ) == -1 )
     {
         std::perror( "listen() failed" );
@@ -129,6 +342,7 @@ int main()
     while ( 1 )
     {
         std::cout << "SERVER: Blocked on accept()\n";
+        // Socket for client
         int newsd = accept( sd, (struct sockaddr *)&client, (socklen_t *)&fromlen );
 
         std::cout << "SERVER: Accepted new client connection on newsd " << newsd << std::endl;
@@ -142,7 +356,6 @@ int main()
         /* the newsd variable is the means of communicating via recv()/send()
             or read()/write() with the connected client */
 
-
         do
         {
             std::cout << "SERVER: Blocked on recv()\n";
@@ -150,7 +363,7 @@ int main()
             /* recv() call will block until we receive data (n > 0)
                 or there's an error (n == -1)
                 or the client closed its socket (n == 0) */
-            
+        
             n = recv( newsd, buffer, BUFFER_SIZE - 1, 0 );   // or read()
 
             if ( n == -1 )
@@ -168,40 +381,15 @@ int main()
                 printf( "SERVER: Rcvd message from %s: %s\n",
                             inet_ntoa( (struct in_addr)client.sin_addr ),
                             buffer );
-                
-                assert(strcmp(buffer, "FILE") == 0);
-                if (strcmp(buffer, "FILE") == 0)
+                if (strcmp(buffer, "UPLOAD") == 0)
                 {
-                    send(newsd, "FILE found", strlen("FILE found"), 0);
-                    // Next line will be the file name
-                    n = recv(newsd, buffer, BUFFER_SIZE - 1, 0);
-                    buffer[n] = '\0';
-                    
-                    if (n == -1)
-                    {
-                        std::cerr << "recv() failed\n";
-                        return EXIT_FAILURE;
-                    }
-                    else if (n == 0)
-                    {
-                        std::cerr << "missing file name\n";
-                        return EXIT_FAILURE;
-                    }
-                    else {
-                        std::string filename(buffer);
-                        download_file(newsd, filename);
-                    }
+                    assert(download_file(newsd));
+                    break;
                 }
-                
-
-                // send ACK message back to client
-
-                n = send( newsd, "ACK\n", 4, 0 );
-
-                if ( n != 4 )
+                if (strcmp(buffer, "DOWNLOAD") == 0)
                 {
-                    perror( "send() failed" );
-                    return EXIT_FAILURE;
+                    upload_file(newsd);
+                    break;
                 }
             }
         }
