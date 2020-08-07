@@ -3,13 +3,17 @@
 
 
 #include <QMainWindow>
-
+#include <syntax_highlighter.h>
 #include<QFile>
 #include<QFileDialog>
 #include <QTextStream>
 #include <QMessageBox>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QFileSystemModel>
+#include <QtCore>
+#include <QtGui>
+#include <QPointer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -46,8 +50,16 @@ private slots:
 
     void on_actionSave_triggered();
 
+    void on_actionNew_File_triggered();
+
+    void on_tabWidget_tabCloseRequested(int index);
+
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";
+    QPointer<syntax_highlighter> highlighter;
+    QFileSystemModel *model;
 };
 #endif // MAINWINDOW_H

@@ -1,11 +1,27 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include <cocode.h>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
+    ui->tabWidget->addTab(new CoCode(),"untitled");
+
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    highlighter = new syntax_highlighter(pTextEdit->document());
+
+    model = new QFileSystemModel(this);
+    model->setRootPath("C:/");
+
+    model->setReadOnly(false);
+
+    ui->treeView->setModel(model);
+    ui->treeView->setRootIndex(model->setRootPath("./"));
 }
 
 MainWindow::~MainWindow()
@@ -16,8 +32,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_triggered()
 {
-    currentFile.clear();
-    ui->plainTextEdit->setPlainText(QString());
+    MainWindow* w = new MainWindow();
+    w->showMaximized();
+    w->show();
 }
 
 void MainWindow::on_actionOpen_File_triggered()
@@ -29,10 +46,28 @@ void MainWindow::on_actionOpen_File_triggered()
         QMessageBox::warning(this,"Warning","Cannot open file : " + file.errorString());
         return;
     }
-    setWindowTitle(fileName);
+   // setWindowTitle(fileName);
     QTextStream in(&file);
     QString text = in.readAll();
-    ui->plainTextEdit->setPlainText(text);
+    if(ui->tabWidget->count()!=0){
+        ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+        pTextEdit = (CoCode*) pWidget;
+        pTextEdit->setPlainText(text);
+        highlighter->setDocument(pTextEdit->document());
+    }
+    else{
+        //add tab
+        ui->tabWidget->addTab(new CoCode(),"untitled");
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+        ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+        pTextEdit = (CoCode*) pWidget;
+        pTextEdit->setPlainText(text);
+        highlighter->setDocument(pTextEdit->document());
+    }
     file.close();
 }
 
@@ -47,8 +82,13 @@ void MainWindow::on_actionSave_As_triggered()
     currentFile = fileName;
     setWindowTitle(fileName);
     QTextStream out(&file);
-    QString text = ui->plainTextEdit->toPlainText();
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    QString text =  pTextEdit->toPlainText();
     out << text;
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
     file.close();
 }
 
@@ -61,7 +101,10 @@ void MainWindow::on_actionPrint_triggered()
         QMessageBox::warning(this, "Warning","Cannot Access Printer");
         return;
     }
-    ui->plainTextEdit->print(&printer);
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->print(&printer);
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -71,30 +114,44 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionCopy_triggered()
 {
-    ui->plainTextEdit->copy();
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->copy();
 }
 
 
 void MainWindow::on_actionPaste_triggered()
 {
-    ui->plainTextEdit->paste();
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->paste();
 }
 
 
 void MainWindow::on_actionCut_triggered()
 {
-    ui->plainTextEdit->cut();
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->cut();
 }
 
 void MainWindow::on_actionUndo_triggered()
 {
-    ui->plainTextEdit->undo();
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->undo();
 }
 
 void MainWindow::on_actionRedo_triggered()
 {
-    ui->plainTextEdit->redo();
-}
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->redo();}
 
 void MainWindow::on_actionSave_triggered()
 {
@@ -107,7 +164,50 @@ void MainWindow::on_actionSave_triggered()
     currentFile = fileName;
     setWindowTitle(fileName);
     QTextStream out(&file);
-    QString text = ui->plainTextEdit->toPlainText();
+    ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+
+    QString text = pTextEdit->toPlainText();
     out << text;
     file.close();
+}
+
+void MainWindow::on_actionNew_File_triggered()
+{
+    ui->tabWidget->addTab(new CoCode(),"untitled");
+    ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    highlighter->setDocument(pTextEdit->document());
+}
+
+void MainWindow::on_tabWidget_tabCloseRequested(int index)
+{
+    ui->tabWidget->removeTab(index);
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if(index>0){
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget= ui->tabWidget->widget(index);
+        pTextEdit = (CoCode*) pWidget;
+        highlighter->setDocument(pTextEdit->document());
+    }
+    else if(index==0){
+        //seg faults here for some reason
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget= ui->tabWidget->widget(index);
+        pTextEdit = (CoCode*) pWidget;
+        highlighter = new syntax_highlighter(pTextEdit->document());
+       /* if(ui->tabWidget->widget(index)!=NULL){
+            CoCode* pTextEdit = NULL;
+            QWidget* pWidget= ui->tabWidget->widget(index);
+            pTextEdit = (CoCode*) pWidget;
+            highlighter->setDocument(pTextEdit->document());
+        }*/
+    }
 }

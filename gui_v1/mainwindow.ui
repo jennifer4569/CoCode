@@ -6,20 +6,69 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>438</width>
+    <height>387</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>25</width>
+    <height>25</height>
+   </size>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonTextUnderIcon</enum>
+  </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QFormLayout" name="formLayout">
-    <item row="0" column="0">
-     <widget class="QColumnView" name="columnView"/>
-    </item>
-    <item row="0" column="1">
-     <widget class="QPlainTextEdit" name="plainTextEdit"/>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTreeView" name="treeView"/>
+      <widget class="QTabWidget" name="tabWidget">
+       <property name="currentIndex">
+        <number>0</number>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Tab 1</string>
+        </attribute>
+        <widget class="CoCode" name="plainTextEdit">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>20</y>
+           <width>104</width>
+           <height>70</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+      </widget>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -28,7 +77,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>438</width>
      <height>21</height>
     </rect>
    </property>
@@ -39,6 +88,7 @@
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionNew"/>
+    <addaction name="actionNew_File"/>
     <addaction name="actionOpen_File"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
@@ -78,7 +128,6 @@
    <addaction name="menuHelp"/>
    <addaction name="menuHelp_2"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
@@ -94,6 +143,7 @@
    <addaction name="actionSave"/>
    <addaction name="actionPrint"/>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew">
    <property name="icon">
     <iconset resource="resources.qrc">
@@ -198,7 +248,19 @@
     <string>Commit</string>
    </property>
   </action>
+  <action name="actionNew_File">
+   <property name="text">
+    <string>New File</string>
+   </property>
+  </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CoCode</class>
+   <extends>QPlainTextEdit</extends>
+   <header>cocode.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources.qrc"/>
  </resources>
