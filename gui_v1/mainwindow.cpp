@@ -231,3 +231,11 @@ void MainWindow::on_actionZoom_Out_triggered()
     pTextEdit = (CoCode*) pWidget;
     pTextEdit->zoomOut();
 }
+
+void MainWindow::on_actionPush_triggered()
+{
+    qInfo() << "pushing";
+    QProcess *process = new QProcess(this);
+    QString file("client_push.exe");
+    process->execute(file, QList<QString>());
+}

@@ -60,6 +60,8 @@ private slots:
 
     void on_actionZoom_Out_triggered();
 
+    void on_actionPush_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";

@@ -45,6 +45,7 @@ public:
     QAction *actionNew_File;
     QAction *actionZoom_In;
     QAction *actionZoom_Out;
+    QAction *actionPush;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QSplitter *splitter;
@@ -115,6 +116,8 @@ public:
         actionZoom_In->setObjectName(QString::fromUtf8("actionZoom_In"));
         actionZoom_Out = new QAction(MainWindow);
         actionZoom_Out->setObjectName(QString::fromUtf8("actionZoom_Out"));
+        actionPush = new QAction(MainWindow);
+        actionPush->setObjectName(QString::fromUtf8("actionPush"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -147,7 +150,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 438, 26));
+        menubar->setGeometry(QRect(0, 0, 438, 21));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         menuEdit = new QMenu(menubar);
@@ -182,6 +185,7 @@ public:
         menuFile->addAction(actionExit);
         menuFile->addAction(actionZoom_In);
         menuFile->addAction(actionZoom_Out);
+        menuFile->addAction(actionPush);
         menuEdit->addAction(actionCopy);
         menuEdit->addAction(actionPaste);
         menuEdit->addAction(actionCut);
@@ -256,6 +260,7 @@ public:
 #if QT_CONFIG(shortcut)
         actionZoom_Out->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+-", nullptr));
 #endif // QT_CONFIG(shortcut)
+        actionPush->setText(QCoreApplication::translate("MainWindow", "Push", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "Tab 1", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         menuEdit->setTitle(QCoreApplication::translate("MainWindow", "Edit", nullptr));
