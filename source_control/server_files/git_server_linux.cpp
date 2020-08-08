@@ -83,7 +83,11 @@ bool download_file(int sd, std::string username)
     //to home directory
     if(path[0] != '/') path = "/" + path;
     path = "/home/"+username+path;
-    
+
+    if(strstr(path, "..")){
+      std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+      return false;
+    }
     
     filename = buffer;
     std::cout << "SERVER: Downloading file " << filename << std::endl;
@@ -172,6 +176,11 @@ void upload_file(int sd, std::string username) {
     //to home directory
     if(path[0] != '/') path = "/" + path;
     path = "/home/"+username+path;
+
+    if(strstr(path, "..")){
+      std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+      return EXIT_FAILURE;
+    }
     
     std::cout << "SERVER: Opening " << path << std::endl;
 

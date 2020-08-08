@@ -103,6 +103,7 @@ bool valid(std::string str){
   return true;
 }
 
+
 int main(int argc, char * argv[])
 {
 
@@ -119,6 +120,11 @@ int main(int argc, char * argv[])
     std::cerr << "Error: Invalid username/password!" << std::endl;
     return EXIT_FAILURE;
   }
+  if(strstr(argv[4], "..")){
+    std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  
     const std::string port = "8123";
     const std::string name = "161.35.48.64";   // Digital Ocean Server
     struct addrinfo hints;
