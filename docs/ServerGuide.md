@@ -24,6 +24,7 @@ For the server, we used DigitalOcean.
 # User Management (Adding/Deleting Users)
 
 1. To add new users, run `adduser --home /home/<new user> <new user>`. This will set the new user to only have write permissions to their home directory (/home/\<new user\>).
+   - NOTE: By default, usernames with capital letters are considered invalid. To set alphanumeric values to be valid (including capital letters), go to /etc/adduser.conf, and add the following to the bottom of the file: `NAME_REGEX=[A-Z,a-z,0-9]`.
 1. To set it so that only that user has read/write access to their home directory, run `chmod 0750 /home/<new user>`.
    - To make this the default behavior, open /etc/adduser.conf, and change the line `DIR_MODE=0755` to `DIR_MODE=0750`
    - NOTE: For the CoCode server, we have changed the permissions from 0750 to 0550, so the user only has read access to their home directory.

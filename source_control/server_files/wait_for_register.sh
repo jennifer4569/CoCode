@@ -13,7 +13,6 @@ do
     inotifywait -q -e modify -e moved_to "$CMD" >/dev/null
     #inotifywait -q -e modify "$CMD" >/dev/null
 
-    echo "Detected request"
     user="olduser"
     pass="oldpass"
 
@@ -26,13 +25,13 @@ do
             #first line is username
             if [ $i -eq 0 ]
             then
-                user=$line
+                user="$line"
 
                 #second is the password (bc of scoping issues we have to add user here)
             else
-                pass=$line
-		./sql_register.exe $user $pass
-		echo "Added ["$user"]"
+                pass="$line"
+		echo "Detected request to add user [$user]"
+		./sql_register.exe "$user" "$pass"
                 #deletes user_credentials once done
                 rm -rf $FILE
             fi
