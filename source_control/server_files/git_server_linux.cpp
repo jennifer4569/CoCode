@@ -169,6 +169,10 @@ void upload_file(int sd, std::string username) {
     if (dir.back() != '/') path += '/';
     path += filename;
 
+    //to home directory
+    if(path[0] != '/') path = "/" + path;
+    path = "/home/"+username+path;
+    
     std::cout << "SERVER: Opening " << path << std::endl;
 
     infile = std::ifstream(path);
