@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <cocode.h>
+#include <QApplication>
+#include <QTextEdit>
+#include <QTimer>
+#include <QFont>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -210,4 +214,28 @@ void MainWindow::on_tabWidget_currentChanged(int index)
             highlighter->setDocument(pTextEdit->document());
         }*/
     }
+}
+
+void MainWindow::on_actionZoom_In_triggered()
+{
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->zoomIn();
+}
+
+void MainWindow::on_actionZoom_Out_triggered()
+{
+    CoCode* pTextEdit = NULL;
+    QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
+    pTextEdit = (CoCode*) pWidget;
+    pTextEdit->zoomOut();
+}
+
+void MainWindow::on_actionPush_triggered()
+{
+    qInfo() << "pushing";
+    QProcess *process = new QProcess(this);
+    QString file("client_push.exe");
+    process->execute(file, QList<QString>());
 }

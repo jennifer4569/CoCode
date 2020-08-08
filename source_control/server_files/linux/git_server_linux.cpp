@@ -34,7 +34,7 @@
 
 /* Download a file from a client socket into a directory in dir
 Default directory is the current working directory */
-bool download_file(int sd)
+bool download_file(int sd, std::string username)
 {
     std::string filename, dir, path;
     std::ofstream outfile;
@@ -80,6 +80,15 @@ bool download_file(int sd)
     if (dir.back() != '/') path += '/';
     path += filename;
 
+    //to home directory
+    if(path[0] != '/') path = "/" + path;
+    path = "/home/"+username+path;
+
+    if(strstr(path.c_str(), "..")){
+      std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+      return false;
+    }
+    
     filename = buffer;
     std::cout << "SERVER: Downloading file " << filename << std::endl;
 
@@ -118,7 +127,7 @@ bool download_file(int sd)
 }
 
 // Sends a file with the given filename from the directory specified in dir to the server
-void upload_file(int sd) {
+void upload_file(int sd, std::string username) {
     std::string word, filename, dir, path;
     std::ifstream infile;
     char buffer[BUFFER_SIZE];
@@ -164,6 +173,15 @@ void upload_file(int sd) {
     if (dir.back() != '/') path += '/';
     path += filename;
 
+    //to home directory
+    if(path[0] != '/') path = "/" + path;
+    path = "/home/"+username+path;
+
+    if(strstr(path.c_str(), "..")){
+      std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+      return;
+    }
+    
     std::cout << "SERVER: Opening " << path << std::endl;
 
     infile = std::ifstream(path);
@@ -282,7 +300,8 @@ bool upload_repo(int sd, const std::string & name)
 
     return true;
 }
-
+bool validate_credentials(std::string username, std::string password);
+		
 int main()
 {
     const std::string port = "8123";
@@ -378,17 +397,55 @@ int main()
             else // n > 0
             {
                 buffer[n] = '\0';   // assume this is text data
-                printf( "SERVER: Rcvd message from %s: %s\n",
+                buffer[11] = '\0';
+		printf("%s\n", buffer);
+		assert(strcmp(buffer, "CREDENTIALS") == 0);
+		int credentials_size = 0;
+		if(buffer[13] != ' ')
+		  credentials_size = (buffer[13]-'0')*10;
+		credentials_size += (buffer[14]-'0');
+
+		send(newsd, "CREDENTIALS found", strlen("CREDENTIALS found"), 0);
+		n = recv(newsd, buffer, credentials_size, 0);
+		buffer[n] = '\0';
+
+		//cstring to string
+		std::string username = "";
+		std::string password = "";
+		bool is_user = true;
+
+		for(int i = 0; i < n; i++){
+		  if(buffer[i] == ','){
+		    is_user = false;
+		    continue;
+		  }
+		  if(is_user) username += buffer[i];
+		  else password += buffer[i];
+		}
+
+		//validates
+		if(!validate_credentials(username, password)){
+		  send(newsd, "failed", strlen("failed"), 0);
+		  continue;
+		}
+		send(newsd, "succes", strlen("succes"), 0);
+		n = recv(newsd, buffer, BUFFER_SIZE - 1, 0);
+		buffer[n] = '\0';
+
+		std::cout << buffer << std::endl;
+		
+
+		printf( "SERVER: Rcvd message from %s: %s\n",
                             inet_ntoa( (struct in_addr)client.sin_addr ),
                             buffer );
                 if (strcmp(buffer, "UPLOAD") == 0)
                 {
-                    assert(download_file(newsd));
+		  assert(download_file(newsd, username));
                     break;
                 }
                 if (strcmp(buffer, "DOWNLOAD") == 0)
                 {
-                    upload_file(newsd);
+		  upload_file(newsd, username);
                     break;
                 }
             }

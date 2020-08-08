@@ -91,18 +91,42 @@ bool download_file(int sd, const std::string & filename, const std::string & dir
     return true;
 }
 
+
+bool valid(std::string str){
+  if(str.length() >= 30) return false;
+  for(int i = 0; i < str.length(); i++){
+    if(!isalnum(str[i])){
+      //maybe allow certain special characters here but idk
+      return false;
+    }
+  }
+  return true;
+}
+
+
 int main(int argc, char * argv[])
 {
-    // Check command line arguments
-    if (argc < 3 || argc > 4)
-    {
-        std::cerr << "Usage: " << argv[0] << " <server file> <server directory>\n"
-                  << "or " << argv[0] << " <server file> <server directory> <client directory>\n";
-        return EXIT_FAILURE;
-    }
 
+  // Check command line arguments
+  if (argc != 5 && argc != 6)
+    {
+      std::cerr << "Usage: " << argv[0] << " <file> <username> <password> <server directory>\n"
+		<< "or " << argv[0] << " <file> <username> <password> <server directory> <client directory>\n";
+      return EXIT_FAILURE;
+    }
+  std::string username = argv[2];
+  std::string password = argv[3];
+  if(!valid(username) || !valid(password)){
+    std::cerr << "Error: Invalid username/password!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if(strstr(argv[4], "..")){
+    std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+    return EXIT_FAILURE;
+  }
+  
     const std::string port = "8123";
-    const std::string name = "127.0.0.1";   //"161.35.48.64";   // Digital Ocean Server
+    const std::string name = "161.35.48.64";   // Digital Ocean Server
     struct addrinfo hints;
     struct addrinfo *client_info;
     struct sockaddr_in server;
@@ -136,12 +160,39 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    if (argc == 3 && !download_file(sd, argv[1], argv[2]))
+
+
+    //verify user credentials before uploading the file
+    std::string credentials = username + "," + password;
+    std::string credentials_size = std::to_string(credentials.length());
+    if(credentials_size.length() < 2){
+      credentials_size = " " + credentials_size;
+    }
+    std::string send_credentials = "CREDENTIALS " + credentials_size;
+    send(sd, send_credentials.c_str(), send_credentials.length(), 0);
+
+    char buffer[BUFFER_SIZE];
+    int n = recv(sd, buffer, strlen("CREDENTIALS found"), 0);
+    send(sd, credentials.c_str(), credentials.length(), 0);
+    n = recv(sd, buffer, strlen("succes"), 0);
+
+    //failed
+    buffer[n] = '\0';
+    if(strcmp(buffer, "failed") == 0){
+      std::cerr << "Error: Incorrect login credentials!" <<std::endl;
+      return EXIT_FAILURE;
+    }
+    std::cout << "Successfully logged in" <<std::endl;
+
+
+
+    
+    if (argc == 5 && !download_file(sd, argv[1], argv[4]))
     {
         std::cerr << "Failed to download file.\n";
         return EXIT_FAILURE;
     }
-    else if (argc == 4 && !download_file(sd, argv[1], argv[2], argv[3]))
+    else if (argc == 6 && !download_file(sd, argv[1], argv[4], argv[5]))
     {
         std::cerr << "Failed to download file.\n";
         return EXIT_FAILURE;
