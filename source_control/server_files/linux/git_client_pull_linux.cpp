@@ -1,4 +1,4 @@
-// git_client_push_linux
+// git_client_pull_linux
 #include <iostream>
 #include <fstream>
 #include <string>

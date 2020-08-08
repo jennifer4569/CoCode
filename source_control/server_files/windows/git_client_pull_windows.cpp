@@ -38,55 +38,68 @@ int sockQuit(void)
 	#endif
 }
 
-// Sends a file with the given filename from the directory specified in dir to the server
-bool upload_file(const SOCKET sd, const std::string & filename, const std::string server_dir,
-                    const std::string dir = "./") {
-    std::string word, path = dir;
-    std::ifstream infile;
+/* Download a file from the server and saves it in client_dir.
+   Uses current directory by default.*/
+bool download_file(SOCKET sd, const std::string & filename, const std::string & dir,
+                    const std::string & client_dir = "./")
+{
+    std::string path;
+    std::ofstream outfile;
     char buffer[BUFFER_SIZE];
     int n;
 
-    if (dir.back() != '/') path += '/';
+    send(sd, "DOWNLOAD", strlen("DOWNLOAD"), 0);
+
+    recv(sd, buffer, strlen("DOWNLOAD found"), 0);
+
+    // Next two lines will send the file name and directory.
+    assert(send(sd, filename.c_str(), filename.size(), 0) == filename.size());
+    assert(recv(sd, buffer, 1, 0) > 0);
+
+    if (dir.back() != '/') strcpy(buffer, std::string(dir + '/').c_str());
+    else strcpy(buffer, dir.c_str());
+    assert(strlen(buffer) > 0);
+    send(sd, buffer, strlen(buffer), 0);
+
+    std::cout << "CLIENT: Downloading file " << filename << std::endl;
+
+    // open a new file with the same name in a specific folder
+    path = client_dir;
+    if (client_dir.back() != '/') path += '/';
     path += filename;
 
-    infile = std::ifstream(path);
-    if (!infile.good())
+    outfile = std::ofstream(path);
+    if (!outfile.good())
     {
-        std::cerr << path << " does not exist or is empty\n";
+        std::cerr << "Can't open " << filename << " to write.\n";
         return false;
     }
 
-    // Notify the server a file is being uploaded.
-    send(sd, "UPLOAD", strlen("UPLOAD"), 0);
-
-    // Wait for the server to read before sending more data.
-    n = recv(sd, buffer, strlen("UPLOAD found"), 0);
-    buffer[n] = '\0';
-
-    // Send the name of the file and the server directory
-    send(sd, filename.c_str(), filename.size(), 0);
-    recv(sd, buffer, 1, 0);
-
-    if (server_dir.back() != '/') strcpy(buffer, std::string(server_dir + '/').c_str());
-    else strcpy(buffer, server_dir.c_str());
-    assert(strlen(buffer) > 0);
-    send(sd, buffer, strlen(buffer), 0);
-    recv(sd, buffer, 1, 0);
-
-    // Send the contents of the file into the client socket
-    while (infile.getline(buffer, BUFFER_SIZE))
+    // Read the contents of the file and copy them into outfile
+    do
     {
-        if (send(sd, buffer, strlen(buffer), 0) < 0)
+        n = recv(sd, buffer, BUFFER_SIZE, 0);
+        buffer[n] = '\0';
+
+        if (n == -1)
         {
-            std::cerr << "send() failed\n";
+            std::cerr << "File does not exist in server or recv() failed.\n";
             return false;
         }
-        // send a new line until getline() reaches eof.
-        if (!infile.eof()) send(sd, "\n", strlen("\n"), 0);
-        assert(recv(sd, buffer, 1, 0) > 0);
-    }
-    infile.close();
-    std::cout << "File successfully sent to server.\n";
+        else if (n == 0)
+        {
+            std::cout << "CLIENT: File write complete.\n";
+        }
+        else
+        {
+            std::cout << "CLIENT: " << buffer;
+            outfile << buffer;
+        }
+
+        send(sd, " ", 1, 0);
+    } while (n > 0);
+
+    outfile.close();
     return true;
 }
 
@@ -95,8 +108,8 @@ int main(int argc, char * argv[])
     // Check command line arguments
     if (argc < 3 || argc > 4)
     {
-        std::cerr << "Usage: " << argv[0] << " <file> <server directory>\n"
-                  << "or " << argv[0] << " <file> <server directory> <client directory>\n";
+        std::cerr << "Usage: " << argv[0] << " <server file> <server directory>\n"
+                  << "or " << argv[0] << " <server file> <server directory> <client directory>\n";
         return EXIT_FAILURE;
     }
 
@@ -114,6 +127,7 @@ int main(int argc, char * argv[])
 		return EXIT_FAILURE;
 	}
 
+
     memset(&hints, 0, sizeof(hints)); // make sure the struct is empty
     hints.ai_family = AF_INET;      // IPv4
     hints.ai_socktype = SOCK_STREAM;  // TCP stream sockets
@@ -126,7 +140,7 @@ int main(int argc, char * argv[])
 
     /* create TCP client socket (endpoint) */
     sd = socket(client_info->ai_family, client_info->ai_socktype, client_info->ai_protocol);
-    if (sd == INVALID_SOCKET)
+    if (sd == -1)
     {
         perror("socket() failed");
         exit(EXIT_FAILURE);
@@ -141,21 +155,20 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-
-    if (argc == 3 && !upload_file(sd, argv[1], argv[2]))
+    if (argc == 3 && !download_file(sd, argv[1], argv[2]))
     {
-        std::cerr << "Failed to send file.\n";
+        std::cerr << "Failed to download file.\n";
         return EXIT_FAILURE;
     }
-    else if (argc == 4 && !upload_file(sd, argv[1], argv[2], argv[3]))
+    else if (argc == 4 && !download_file(sd, argv[1], argv[2], argv[3]))
     {
-        std::cerr << "Failed to send file.\n";
+        std::cerr << "Failed to download file.\n";
         return EXIT_FAILURE;
     }
     
     closesocket(sd);
     freeaddrinfo(client_info);
-	
+
 	sockQuit();
     return EXIT_SUCCESS;
 }
