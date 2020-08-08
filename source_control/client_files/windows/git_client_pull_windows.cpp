@@ -38,6 +38,17 @@ int sockQuit(void)
 	#endif
 }
 
+bool valid(const std::string & str){
+    if(str.length() >= 30) return false;
+        for(int i = 0; i < str.length(); i++){
+            if(!isalnum(str[i])){
+                //maybe allow certain special characters here but idk
+                return false;
+            }
+        }
+    return true;
+}
+
 /* Download a file from the server and saves it in client_dir.
    Uses current directory by default.*/
 bool download_file(SOCKET sd, const std::string & filename, const std::string & dir,
@@ -106,20 +117,23 @@ bool download_file(SOCKET sd, const std::string & filename, const std::string & 
 int main(int argc, char * argv[])
 {
     // Check command line arguments
-    if (argc < 3 || argc > 4)
+    if (argc != 5 && argc != 6)
     {
-        std::cerr << "Usage: " << argv[0] << " <server file> <server directory>\n"
-                  << "or " << argv[0] << " <server file> <server directory> <client directory>\n";
-        return EXIT_FAILURE;
+        std::cerr << "Usage: " << argv[0] << " <file> <username> <password> <server directory>\n"
+                    << "or " << argv[0] << " <file> <username> <password> <server directory> <client directory>\n";
+                    return EXIT_FAILURE;
     }
 
+    const std::string username = argv[2];
+    const std::string password = argv[3];
     const std::string port = "8123";
-    const std::string name = "127.0.0.1";   //"161.35.48.64";   // Digital Ocean Server
+    const std::string name = "161.35.48.64";   // Digital Ocean Server
     struct addrinfo hints;
     struct addrinfo *client_info;
     struct sockaddr_in server;
     SOCKET sd;
-	int winsock = sockInit();
+    char buffer[BUFFER_SIZE];
+    int winsock = sockInit();
 
 	if (winsock == 0)
 	{
@@ -127,6 +141,15 @@ int main(int argc, char * argv[])
 		return EXIT_FAILURE;
 	}
 
+    if(!valid(username) || !valid(password)) {
+        std::cerr << "Error: Invalid username/password!" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if(strstr(argv[4], "..")) {
+        std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     memset(&hints, 0, sizeof(hints)); // make sure the struct is empty
     hints.ai_family = AF_INET;      // IPv4
@@ -140,7 +163,7 @@ int main(int argc, char * argv[])
 
     /* create TCP client socket (endpoint) */
     sd = socket(client_info->ai_family, client_info->ai_socktype, client_info->ai_protocol);
-    if (sd == -1)
+    if (sd == INVALID_SOCKET)
     {
         perror("socket() failed");
         exit(EXIT_FAILURE);
@@ -155,12 +178,33 @@ int main(int argc, char * argv[])
         return EXIT_FAILURE;
     }
 
-    if (argc == 3 && !download_file(sd, argv[1], argv[2]))
+    //verify user credentials before uploading the file
+    std::string credentials = username + "," + password;
+    std::string credentials_size = std::to_string(credentials.length());
+    if(credentials_size.length() < 2){
+        credentials_size = " " + credentials_size;
+    }
+    std::string send_credentials = "CREDENTIALS " + credentials_size;
+    send(sd, send_credentials.c_str(), send_credentials.length(), 0);
+
+    int n = recv(sd, buffer, strlen("CREDENTIALS found"), 0);
+    send(sd, credentials.c_str(), credentials.length(), 0);
+    n = recv(sd, buffer, strlen("succes"), 0);
+
+    //failed
+    buffer[n] = '\0';
+    if(strcmp(buffer, "failed") == 0){
+        std::cerr << "Error: Incorrect login credentials!" << std::endl;
+        return EXIT_FAILURE;
+    }
+    std::cout << "Successfully logged in" <<std::endl;
+
+    if (argc == 5 && !download_file(sd, argv[1], argv[4]))
     {
         std::cerr << "Failed to download file.\n";
         return EXIT_FAILURE;
     }
-    else if (argc == 4 && !download_file(sd, argv[1], argv[2], argv[3]))
+    else if (argc == 6 && !download_file(sd, argv[1], argv[4], argv[5]))
     {
         std::cerr << "Failed to download file.\n";
         return EXIT_FAILURE;

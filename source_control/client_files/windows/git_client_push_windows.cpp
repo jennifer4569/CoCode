@@ -116,12 +116,18 @@ int main(int argc, char * argv[])
     const std::string password = argv[3];
     const std::string port = "8123";
     const std::string name = "161.35.48.64";   // Digital Ocean Server
-    int winsock = sockInit();
     struct addrinfo hints;
     struct addrinfo *client_info;
     struct sockaddr_in server;
     SOCKET sd;
     char buffer[BUFFER_SIZE];
+    int winsock = sockInit();
+
+    if (winsock == 0)
+	{
+		std::cerr << "Program is not running on Windows!\n";
+		return EXIT_FAILURE;
+	}
 
     if(!valid(username) || !valid(password)) {
         std::cerr << "Error: Invalid username/password!" << std::endl;
@@ -145,7 +151,7 @@ int main(int argc, char * argv[])
 
     /* create TCP client socket (endpoint) */
     sd = socket(client_info->ai_family, client_info->ai_socktype, client_info->ai_protocol);
-    if (sd == -1)
+    if (sd == INVALID_SOCKET)
     {
         perror("socket() failed");
         exit(EXIT_FAILURE);
@@ -159,7 +165,6 @@ int main(int argc, char * argv[])
         std::perror("connect() failed\n");
         return EXIT_FAILURE;
     }
-
 
     //verify user credentials before uploading the file
     std::string credentials = username + "," + password;
