@@ -13,9 +13,6 @@ init_server: compile_server
 	@./wait_for_register.sh &
 	@./source_control_server.exe &
 
-compile_all: clean compile_server compile_client
-
-
 clean:
 	@echo "Cleaning directories..."
 	@find . -type f -name "*~" -delete
