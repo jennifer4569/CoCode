@@ -202,7 +202,10 @@ void upload_file(int sd, std::string username) {
         }
         // send a new line until getline() reaches end of file.
         if (!infile.eof()) send(sd, "\n", strlen("\n"), 0);
-        assert(recv(sd, buffer, 1, 0) > 0);
+
+	if(recv(sd, buffer, 1, 0) > 0){
+	  break;
+	}
     }
     infile.close();
     std::cout << "File successfully sent to server.\n";
@@ -235,10 +238,9 @@ bool print_dir(std::string name)
         {
             if (S_ISDIR(stat_buf.st_mode) && path.back() != '.')
             {
-                
-
                 // Print other folders excluding the cwd and parent directory
-                assert(print_dir(path));
+	      if(!print_dir(path))
+		 return false;
             }
             else if (S_ISREG(stat_buf.st_mode))
             {
@@ -286,7 +288,8 @@ bool upload_repo(int sd, const std::string & name)
                 // Create a folder
 
                 // Print other folders excluding the cwd and parent directory
-                assert(upload_repo(sd, path));
+	      if(!upload_repo(sd, path))
+		return false;
             }
             else if (S_ISREG(stat_buf.st_mode))
             {
@@ -399,7 +402,9 @@ int main()
                 buffer[n] = '\0';   // assume this is text data
                 buffer[11] = '\0';
 		printf("%s\n", buffer);
-		assert(strcmp(buffer, "CREDENTIALS") == 0);
+		if(strcmp(buffer, "CREDENTIALS") != 0)
+		  break;
+		
 		int credentials_size = 0;
 		if(buffer[13] != ' ')
 		  credentials_size = (buffer[13]-'0')*10;
@@ -440,7 +445,7 @@ int main()
                             buffer );
                 if (strcmp(buffer, "UPLOAD") == 0)
                 {
-		  assert(download_file(newsd, username));
+		  download_file(newsd, username);
                     break;
                 }
                 if (strcmp(buffer, "DOWNLOAD") == 0)
