@@ -18,6 +18,6 @@ clean:
 	@find . -type f -name "*~" -delete
 	@find . -type f -name "*.exe" -delete
 	@find . -type f -name "*.out" -delete
-	@killall wait_for_register.sh
-	@killall inotifywait
-	@killall source_control_server.exe
+	@killall wait_for_register.sh -q || true
+	@killall inotifywait -q ||true
+	@killall source_control_server.exe -q || true
