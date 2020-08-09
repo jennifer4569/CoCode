@@ -203,7 +203,7 @@ void upload_file(int sd, std::string username) {
         // send a new line until getline() reaches end of file.
         if (!infile.eof()) send(sd, "\n", strlen("\n"), 0);
 
-	if(recv(sd, buffer, 1, 0) > 0){
+	if(!recv(sd, buffer, 1, 0) > 0){
 	  break;
 	}
     }
