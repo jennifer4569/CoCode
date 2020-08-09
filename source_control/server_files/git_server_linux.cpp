@@ -79,17 +79,17 @@ bool download_file(int sd, std::string username)
     path = dir;
     if (dir.back() != '/') path += '/';
     path += filename;
-
+    
     //to home directory
     if(path[0] != '/') path = "/" + path;
     path = "/home/"+username+path;
-
+    //std::cout << path << std::endl;
     if(strstr(path.c_str(), "..")){
       std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
       return false;
     }
     
-    filename = buffer;
+    //filename = buffer;
     std::cout << "SERVER: Downloading file " << filename << std::endl;
 
     outfile = std::ofstream(path);
