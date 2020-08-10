@@ -82,6 +82,7 @@ bool download_file(int sd, std::string username)
     
     //to home directory
     if(path[0] != '/') path = "/" + path;
+    std::string versionpath = "/home/"+username+"/.cocode/version.txt";
     path = "/home/"+username+path;
     //std::cout << path << std::endl;
     if(strstr(path.c_str(), "..")){
@@ -123,6 +124,18 @@ bool download_file(int sd, std::string username)
     } while (n > 0);
 
     outfile.close();
+
+
+    //update version
+    std::ifstream infile = std::ifstream(versionpath);
+    int version_num;
+    infile >> version_num;
+    infile.close();
+    version_num++;
+    outfile = std::ofstream(versionpath);
+    outfile << version_num << std::endl;
+    outfile.close();
+    
     return true;
 }
 
@@ -304,7 +317,114 @@ bool upload_repo(int sd, const std::string & name)
     return true;
 }
 bool validate_credentials(std::string username, std::string password);
-		
+int get_version_number(const std::string &file){
+  std::string filepath = file.substr(0,file.find_last_of("/\\")+1);
+  std::string cocodepath = filepath+".cocode/";
+  errno = 0;
+  //mkdir was successful, so the directory didn't exist before
+  if(mkdir(cocodepath.c_str(), 0755) == 0){
+    return -1;
+  }
+  if(errno == EEXIST){
+    std::ifstream infile = std::ifstream(cocodepath+"version.txt");
+    if(!infile.good()){
+      return -1;
+    }
+    int version_number = -1;
+    infile >> version_number;
+    if(version_number <= 0) version_number = -1;
+    return version_number;
+  }
+  //unexpected error
+  return -1;
+}
+
+bool version_check(int sd, std::string username)
+{
+    std::string filename, dir, path;
+    std::ofstream outfile;
+    char buffer[BUFFER_SIZE];
+    int n;
+
+    // Notify the client the command 'UPLOAD' has been received.
+    send(sd, "VERSION CHECK found", strlen("VERSION CHECK found"), 0);
+
+    /* Get the file name and directory to determine which file will be
+       sent to the client. */
+    n = recv(sd, buffer, BUFFER_SIZE - 1, 0);
+    if (n == -1)
+    {
+        std::cerr << "recv() failed\n";
+        return false;
+    }
+    else if (n == 0)
+    {
+        std::cerr << "missing file name\n";
+        return false;
+    }
+    buffer[n] = '\0';
+    send(sd, " ", 1, 0);     // send blank message to undo block from client
+    filename = std::string(buffer);
+    
+    n = recv(sd, buffer, BUFFER_SIZE - 1, 0);
+    if (n == -1)
+    {
+        std::cerr << "recv() failed\n";
+        return false;
+    }
+    else if (n == 0)
+    {
+        std::cerr << "missing directory\n";
+        return false;
+    }
+    buffer[n] = '\0';
+    send(sd, " ", 1, 0);
+    dir = std::string(buffer);
+
+    path = dir;
+    if (dir.back() != '/') path += '/';
+    path += filename;
+    
+    //to home directory
+    if(path[0] != '/') path = "/" + path;
+    std::string home_path = "/home/"+username+"/";
+    path = "/home/"+username+path;
+    if(strstr(path.c_str(), "..")){
+      std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
+      return false;
+    }
+
+    n = recv(sd, buffer, BUFFER_SIZE, 0);
+    buffer[n] = '\0';
+    int client_version = std::atoi(buffer);
+    int server_version = get_version_number(home_path);
+    std::cout << "client version: " << client_version << std::endl;
+    std::cout << "server version: " << server_version << std::endl;
+    //filename = buffer;
+    std::cout << "SERVER: Checking file " << filename << std::endl;
+
+    std::ifstream infile = std::ifstream(path);
+    if (!infile.good())
+    {
+      //does not exist, return true
+      send(sd, "succes", strlen("succes"), 0);
+    }
+    else{
+      //else, check version number
+      if(client_version == -1 || server_version == client_version){
+	send(sd, "succes", strlen("succes"), 0);
+      }
+      else{
+	send(sd, "failed", strlen("failed"), 0);
+      }
+      recv(sd, buffer, 1, 0);
+      send(sd, std::to_string(server_version).c_str(), std::to_string(server_version).length(), 0);
+    }
+
+    infile.close();
+    return true;
+}
+
 int main()
 {
     const std::string port = "8123";
@@ -453,6 +573,11 @@ int main()
 		  upload_file(newsd, username);
                     break;
                 }
+		if(strcmp(buffer, "VERSION CHECK") == 0){
+		  version_check(newsd, username);
+		  break;
+		}
+		
             }
         }
         while ( n > 0 );
