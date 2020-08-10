@@ -97,6 +97,22 @@ bool upload_file(int sd, const std::string & filename, const std::string server_
     }
     infile.close();
     std::cout << "File successfully sent to server.\n";
+
+
+    //update version
+    std::string filepath = filename.substr(0,filename.find_last_of("/\\")+1);
+    std::string versionpath = filepath+".cocode/version.txt";
+
+    infile = std::ifstream(versionpath);
+    int version_num;
+    infile >> version_num;
+    infile.close();
+    version_num++;
+    std::ofstream outfile = std::ofstream(versionpath);
+    outfile << version_num << std::endl;
+    outfile.close();
+
+    
     return true;
 }
 
@@ -110,6 +126,8 @@ bool valid(std::string str){
   }
   return true;
 }
+
+bool version_main(int argc, char* argv[]);
 
 int main(int argc, char * argv[])
 {
@@ -131,6 +149,10 @@ int main(int argc, char * argv[])
       std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
       return EXIT_FAILURE;
     }
+
+    if(!version_main(argc, argv))
+      return EXIT_SUCCESS;
+    
     const std::string port = "8123";
     const std::string name = "161.35.48.64";//"127.0.0.1";   //;   // Digital Ocean Server
     struct addrinfo hints;

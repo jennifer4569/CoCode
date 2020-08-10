@@ -104,17 +104,19 @@ bool valid(std::string str){
   return true;
 }
 
+bool version_main(int argc, char*argv[]);
 
 int main(int argc, char * argv[])
 {
 
   // Check command line arguments
-  if (argc != 5 && argc != 6)
+  if (argc != 5 && argc != 6 && argc != 7)
     {
       std::cerr << "Usage: " << argv[0] << " <file> <username> <password> <server directory>\n"
 		<< "or " << argv[0] << " <file> <username> <password> <server directory> <client directory>\n";
       return EXIT_FAILURE;
     }
+  
   std::string username = argv[2];
   std::string password = argv[3];
   if(!valid(username) || !valid(password)){
@@ -126,6 +128,10 @@ int main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
+  //checks and pulls the correct version
+  if(argc != 7 && !version_main(argc, argv))
+    return EXIT_SUCCESS;
+  
   const std::string port = "8123";
   const std::string name = "161.35.48.64";   // Digital Ocean Server
   struct addrinfo hints;
@@ -154,7 +160,7 @@ int main(int argc, char * argv[])
 
   server = *(sockaddr_in *)client_info->ai_addr;
 
-  std::cout << "connecting to server.....\n";
+  if(argc != 7) std::cout << "connecting to server.....\n";
   if (connect(sd, (struct sockaddr *)&server, sizeof(server)) == -1)
     {
       std::perror("connect() failed\n");
@@ -183,12 +189,10 @@ int main(int argc, char * argv[])
     std::cerr << "Error: Incorrect login credentials!" <<std::endl;
     return EXIT_FAILURE;
   }
-  std::cout << "Successfully logged in" <<std::endl;
+  if(argc != 7) std::cout << "Successfully logged in" <<std::endl;
 
 
-
-
-  if (argc == 5 && !download_file(sd, argv[1], argv[4]))
+  if ((argc == 5 || argc == 7) && !download_file(sd, argv[1], argv[4]))
     {
       std::cerr << "Failed to download file.\n";
       return EXIT_FAILURE;

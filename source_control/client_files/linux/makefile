@@ -3,8 +3,8 @@
 
 compile_client: clean
 	@echo "Compiling Client Code..."
-	@g++ git_client_push_linux.cpp -o push.exe
-	@g++ git_client_pull_linux.cpp -o pull.exe
+	@g++ git_client_push_linux.cpp git_client_version.cpp -o push.exe
+	@g++ git_client_pull_linux.cpp git_client_version.cpp -o pull.exe
 
 clean:
 	@echo "Cleaning directories..."
