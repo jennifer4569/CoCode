@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "diffwindow.h"
 #include "ui_mainwindow.h"
 #include <cocode.h>
 #include <QApplication>
@@ -238,4 +239,11 @@ void MainWindow::on_actionPush_triggered()
     QProcess *process = new QProcess(this);
     QString file("client_push.exe");
     process->execute(file, QList<QString>());
+}
+
+void MainWindow::on_actionDiff_triggered()
+{
+    DiffWindow *d = new DiffWindow;
+    d->setWindowTitle("Diff");
+    d->showMaximized();
 }

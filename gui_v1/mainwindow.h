@@ -62,6 +62,8 @@ private slots:
 
     void on_actionPush_triggered();
 
+    void on_actionDiff_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";

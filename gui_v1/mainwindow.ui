@@ -125,10 +125,17 @@
      <string>Tools</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuTools_2">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionDiff"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuTools_2"/>
    <addaction name="menuHelp_2"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -281,6 +288,11 @@
   <action name="actionPush">
    <property name="text">
     <string>Push</string>
+   </property>
+  </action>
+  <action name="actionDiff">
+   <property name="text">
+    <string>Diff</string>
    </property>
   </action>
  </widget>

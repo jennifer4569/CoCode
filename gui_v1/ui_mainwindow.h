@@ -46,6 +46,7 @@ public:
     QAction *actionZoom_In;
     QAction *actionZoom_Out;
     QAction *actionPush;
+    QAction *actionDiff;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QSplitter *splitter;
@@ -59,6 +60,7 @@ public:
     QMenu *menuHelp;
     QMenu *menuHelp_2;
     QMenu *menuTools;
+    QMenu *menuTools_2;
     QToolBar *toolBar;
     QStatusBar *statusbar;
 
@@ -118,6 +120,8 @@ public:
         actionZoom_Out->setObjectName(QString::fromUtf8("actionZoom_Out"));
         actionPush = new QAction(MainWindow);
         actionPush->setObjectName(QString::fromUtf8("actionPush"));
+        actionDiff = new QAction(MainWindow);
+        actionDiff->setObjectName(QString::fromUtf8("actionDiff"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -161,6 +165,8 @@ public:
         menuHelp_2->setObjectName(QString::fromUtf8("menuHelp_2"));
         menuTools = new QMenu(menubar);
         menuTools->setObjectName(QString::fromUtf8("menuTools"));
+        menuTools_2 = new QMenu(menubar);
+        menuTools_2->setObjectName(QString::fromUtf8("menuTools_2"));
         MainWindow->setMenuBar(menubar);
         toolBar = new QToolBar(MainWindow);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
@@ -173,6 +179,7 @@ public:
         menubar->addAction(menuEdit->menuAction());
         menubar->addAction(menuTools->menuAction());
         menubar->addAction(menuHelp->menuAction());
+        menubar->addAction(menuTools_2->menuAction());
         menubar->addAction(menuHelp_2->menuAction());
         menuFile->addSeparator();
         menuFile->addSeparator();
@@ -193,6 +200,7 @@ public:
         menuEdit->addAction(actionRedo);
         menuHelp->addSeparator();
         menuHelp->addAction(actionCommit);
+        menuTools_2->addAction(actionDiff);
         toolBar->addAction(actionNew);
         toolBar->addAction(actionOpen_File);
         toolBar->addAction(actionSave);
@@ -261,12 +269,14 @@ public:
         actionZoom_Out->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+-", nullptr));
 #endif // QT_CONFIG(shortcut)
         actionPush->setText(QCoreApplication::translate("MainWindow", "Push", nullptr));
+        actionDiff->setText(QCoreApplication::translate("MainWindow", "Diff", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "Tab 1", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         menuEdit->setTitle(QCoreApplication::translate("MainWindow", "Edit", nullptr));
         menuHelp->setTitle(QCoreApplication::translate("MainWindow", "Git", nullptr));
         menuHelp_2->setTitle(QCoreApplication::translate("MainWindow", "Help", nullptr));
         menuTools->setTitle(QCoreApplication::translate("MainWindow", "Tools", nullptr));
+        menuTools_2->setTitle(QCoreApplication::translate("MainWindow", "Tools", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi
 

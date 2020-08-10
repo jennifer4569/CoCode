@@ -17,17 +17,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     cocode.cpp \
+    diffwindow.cpp \
     main.cpp \
     mainwindow.cpp \
     syntax_highlighter.cpp
 
 HEADERS += \
     cocode.h \
+    diffwindow.h \
     linenumber.h \
     mainwindow.h \
     syntax_highlighter.h
 
 FORMS += \
+    diffwindow.ui \
     mainwindow.ui
 
 # Default rules for deployment.
