@@ -60,7 +60,6 @@ public:
     QMenu *menuHelp;
     QMenu *menuHelp_2;
     QMenu *menuTools;
-    QMenu *menuTools_2;
     QToolBar *toolBar;
     QStatusBar *statusbar;
 
@@ -165,8 +164,6 @@ public:
         menuHelp_2->setObjectName(QString::fromUtf8("menuHelp_2"));
         menuTools = new QMenu(menubar);
         menuTools->setObjectName(QString::fromUtf8("menuTools"));
-        menuTools_2 = new QMenu(menubar);
-        menuTools_2->setObjectName(QString::fromUtf8("menuTools_2"));
         MainWindow->setMenuBar(menubar);
         toolBar = new QToolBar(MainWindow);
         toolBar->setObjectName(QString::fromUtf8("toolBar"));
@@ -179,7 +176,6 @@ public:
         menubar->addAction(menuEdit->menuAction());
         menubar->addAction(menuTools->menuAction());
         menubar->addAction(menuHelp->menuAction());
-        menubar->addAction(menuTools_2->menuAction());
         menubar->addAction(menuHelp_2->menuAction());
         menuFile->addSeparator();
         menuFile->addSeparator();
@@ -200,7 +196,7 @@ public:
         menuEdit->addAction(actionRedo);
         menuHelp->addSeparator();
         menuHelp->addAction(actionCommit);
-        menuTools_2->addAction(actionDiff);
+        menuTools->addAction(actionDiff);
         toolBar->addAction(actionNew);
         toolBar->addAction(actionOpen_File);
         toolBar->addAction(actionSave);
@@ -276,7 +272,6 @@ public:
         menuHelp->setTitle(QCoreApplication::translate("MainWindow", "Git", nullptr));
         menuHelp_2->setTitle(QCoreApplication::translate("MainWindow", "Help", nullptr));
         menuTools->setTitle(QCoreApplication::translate("MainWindow", "Tools", nullptr));
-        menuTools_2->setTitle(QCoreApplication::translate("MainWindow", "Tools", nullptr));
         toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
     } // retranslateUi
 
