@@ -244,6 +244,5 @@ void MainWindow::on_actionPush_triggered()
 void MainWindow::on_actionDiff_triggered()
 {
     DiffWindow *d = new DiffWindow;
-    d->setWindowTitle("Diff");
     d->showMaximized();
 }

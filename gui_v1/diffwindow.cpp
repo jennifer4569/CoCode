@@ -6,6 +6,10 @@ DiffWindow::DiffWindow(QWidget *parent) :
     ui(new Ui::DiffWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Diff");
+
+    ui->plainTextEdit->setReadOnly(true);
+    ui->plainTextEdit_2->setReadOnly(true);
 }
 
 DiffWindow::~DiffWindow()
