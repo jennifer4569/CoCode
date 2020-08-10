@@ -31,7 +31,16 @@
     struct hostent * hp = gethostbyname( "127.0.0.1" );  // IPv4
     struct hostent * hp = gethostbyname( "::1" );  // IPv6
 #endif
-
+void create_dirs(std::string dir){
+  int lastindex = 0;
+  for(int i = 0; i < 2; i++)
+    lastindex = dir.find('/', lastindex+1);
+  while(lastindex != -1){
+    std::string curr_dir = dir.substr(0, lastindex+1);
+    mkdir(curr_dir.c_str(), 0750);
+    lastindex = dir.find('/', lastindex+1);
+  }
+}
 /* Download a file from a client socket into a directory in dir
 Default directory is the current working directory */
 bool download_file(int sd, std::string username)
@@ -84,12 +93,12 @@ bool download_file(int sd, std::string username)
     if(path[0] != '/') path = "/" + path;
     std::string versionpath = "/home/"+username+"/.cocode/version.txt";
     path = "/home/"+username+path;
-    //std::cout << path << std::endl;
+
     if(strstr(path.c_str(), "..")){
       std::cerr << "Error: Invalid server path! Cannot use \"..\"!" << std::endl;
       return false;
     }
-    
+    create_dirs(path);
     //filename = buffer;
     std::cout << "SERVER: Downloading file " << filename << std::endl;
 
@@ -322,7 +331,7 @@ int get_version_number(const std::string &file){
   std::string cocodepath = filepath+".cocode/";
   errno = 0;
   //mkdir was successful, so the directory didn't exist before
-  if(mkdir(cocodepath.c_str(), 0755) == 0){
+  if(mkdir(cocodepath.c_str(), 0750) == 0){
     return -1;
   }
   if(errno == EEXIST){
