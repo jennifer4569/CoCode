@@ -241,8 +241,8 @@ void MainWindow::on_actionPush_triggered()
 {
     qInfo() << "pushing";
     QProcess *process = new QProcess(this);
-    QString file("client_push.exe");
-    process->execute(file, QList<QString>());
+    QString file("a.exe");
+    process->execute(file, QList<QString>()<< "test.txt" << "username" << "password" << ".");
 }
 
 void MainWindow::on_actionDiff_triggered()

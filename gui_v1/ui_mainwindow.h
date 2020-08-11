@@ -34,7 +34,6 @@ public:
     QAction *actionOpen_File;
     QAction *actionSave;
     QAction *actionSave_As;
-    QAction *actionPrint;
     QAction *actionExit;
     QAction *actionCopy;
     QAction *actionPaste;
@@ -45,8 +44,9 @@ public:
     QAction *actionNew_File;
     QAction *actionZoom_In;
     QAction *actionZoom_Out;
-    QAction *actionPush;
     QAction *actionDiff;
+    QAction *actionPush;
+    QAction *actionPull;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QSplitter *splitter;
@@ -89,16 +89,11 @@ public:
         actionSave->setIcon(icon2);
         actionSave_As = new QAction(MainWindow);
         actionSave_As->setObjectName(QString::fromUtf8("actionSave_As"));
-        actionPrint = new QAction(MainWindow);
-        actionPrint->setObjectName(QString::fromUtf8("actionPrint"));
-        QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/img/print.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionPrint->setIcon(icon3);
         actionExit = new QAction(MainWindow);
         actionExit->setObjectName(QString::fromUtf8("actionExit"));
-        QIcon icon4;
-        icon4.addFile(QString::fromUtf8(":/img/exit.png"), QSize(), QIcon::Normal, QIcon::Off);
-        actionExit->setIcon(icon4);
+        QIcon icon3;
+        icon3.addFile(QString::fromUtf8(":/img/exit.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionExit->setIcon(icon3);
         actionCopy = new QAction(MainWindow);
         actionCopy->setObjectName(QString::fromUtf8("actionCopy"));
         actionPaste = new QAction(MainWindow);
@@ -117,10 +112,18 @@ public:
         actionZoom_In->setObjectName(QString::fromUtf8("actionZoom_In"));
         actionZoom_Out = new QAction(MainWindow);
         actionZoom_Out->setObjectName(QString::fromUtf8("actionZoom_Out"));
-        actionPush = new QAction(MainWindow);
-        actionPush->setObjectName(QString::fromUtf8("actionPush"));
         actionDiff = new QAction(MainWindow);
         actionDiff->setObjectName(QString::fromUtf8("actionDiff"));
+        actionPush = new QAction(MainWindow);
+        actionPush->setObjectName(QString::fromUtf8("actionPush"));
+        QIcon icon4;
+        icon4.addFile(QString::fromUtf8("../../../Downloads/push.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionPush->setIcon(icon4);
+        actionPull = new QAction(MainWindow);
+        actionPull->setObjectName(QString::fromUtf8("actionPull"));
+        QIcon icon5;
+        icon5.addFile(QString::fromUtf8("../../../Downloads/pull.png"), QSize(), QIcon::Normal, QIcon::Off);
+        actionPull->setIcon(icon5);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -153,7 +156,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 438, 21));
+        menubar->setGeometry(QRect(0, 0, 438, 26));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         menuEdit = new QMenu(menubar);
@@ -184,11 +187,9 @@ public:
         menuFile->addAction(actionOpen_File);
         menuFile->addAction(actionSave);
         menuFile->addAction(actionSave_As);
-        menuFile->addAction(actionPrint);
         menuFile->addAction(actionExit);
         menuFile->addAction(actionZoom_In);
         menuFile->addAction(actionZoom_Out);
-        menuFile->addAction(actionPush);
         menuEdit->addAction(actionCopy);
         menuEdit->addAction(actionPaste);
         menuEdit->addAction(actionCut);
@@ -200,7 +201,8 @@ public:
         toolBar->addAction(actionNew);
         toolBar->addAction(actionOpen_File);
         toolBar->addAction(actionSave);
-        toolBar->addAction(actionPrint);
+        toolBar->addAction(actionPush);
+        toolBar->addAction(actionPull);
 
         retranslateUi(MainWindow);
 
@@ -226,10 +228,6 @@ public:
         actionSave->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+S", nullptr));
 #endif // QT_CONFIG(shortcut)
         actionSave_As->setText(QCoreApplication::translate("MainWindow", "Save As", nullptr));
-        actionPrint->setText(QCoreApplication::translate("MainWindow", "Print", nullptr));
-#if QT_CONFIG(shortcut)
-        actionPrint->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+P", nullptr));
-#endif // QT_CONFIG(shortcut)
         actionExit->setText(QCoreApplication::translate("MainWindow", "Exit", nullptr));
         actionCopy->setText(QCoreApplication::translate("MainWindow", "Copy", nullptr));
 #if QT_CONFIG(shortcut)
@@ -264,8 +262,9 @@ public:
 #if QT_CONFIG(shortcut)
         actionZoom_Out->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+-", nullptr));
 #endif // QT_CONFIG(shortcut)
-        actionPush->setText(QCoreApplication::translate("MainWindow", "Push", nullptr));
         actionDiff->setText(QCoreApplication::translate("MainWindow", "Diff", nullptr));
+        actionPush->setText(QCoreApplication::translate("MainWindow", "Push", nullptr));
+        actionPull->setText(QCoreApplication::translate("MainWindow", "Pull", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "Tab 1", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         menuEdit->setTitle(QCoreApplication::translate("MainWindow", "Edit", nullptr));
