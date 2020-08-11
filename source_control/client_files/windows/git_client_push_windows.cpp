@@ -25,7 +25,7 @@ int sockInit()
 		WSADATA wsa_data;
 		return WSAStartup(MAKEWORD(2,2), &wsa_data);
 	#else
-		return 0;
+		return -1;
 	#endif
 }
 
@@ -123,7 +123,7 @@ int main(int argc, char * argv[])
     char buffer[BUFFER_SIZE];
     int winsock = sockInit();
 
-    if (winsock == 0)
+    if (winsock != 0)
 	{
 		std::cerr << "Program is not running on Windows!\n";
 		return EXIT_FAILURE;
