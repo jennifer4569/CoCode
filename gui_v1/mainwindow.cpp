@@ -27,6 +27,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->treeView->setModel(model);
     ui->treeView->setRootIndex(model->setRootPath("./"));
+
+    ui->treeView->hideColumn(3);
+    ui->treeView->hideColumn(2);
+    ui->treeView->hideColumn(1);
 }
 
 MainWindow::~MainWindow()
