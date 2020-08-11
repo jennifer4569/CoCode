@@ -254,6 +254,12 @@ void MainWindow::on_actionDiff_triggered()
 void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
 {
     QString fileName = index.data().toString();
+    for (int i = 0; i < ui->tabWidget->count(); i++) {
+        if (ui->tabWidget->tabText(i) == fileName) {
+            ui->tabWidget->setCurrentIndex(i);
+            return;
+        }
+    }
     QFile file(fileName);
     currentFile = fileName;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
@@ -264,6 +270,8 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
     QTextStream in(&file);
     QString text = in.readAll();
     if (ui->tabWidget->count()!=0) {
+        ui->tabWidget->addTab(new CoCode(), "untitled");
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
         CoCode* pTextEdit = NULL;
         QWidget* pWidget = ui->tabWidget->widget(ui->tabWidget->currentIndex());
