@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     model = new QFileSystemModel(this);
     model->setRootPath("C:/");
 
-    model->setReadOnly(false);
+    model->setFilter(QDir::Files);
 
     ui->treeView->setModel(model);
     ui->treeView->setRootIndex(model->setRootPath("./"));
@@ -51,7 +51,7 @@ void MainWindow::on_actionOpen_File_triggered()
         QMessageBox::warning(this,"Warning","Cannot open file : " + file.errorString());
         return;
     }
-   // setWindowTitle(fileName);
+    // setWindowTitle(fileName);
     QTextStream in(&file);
     QString text = in.readAll();
     if(ui->tabWidget->count()!=0){
@@ -208,7 +208,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
         QWidget* pWidget= ui->tabWidget->widget(index);
         pTextEdit = (CoCode*) pWidget;
         highlighter = new syntax_highlighter(pTextEdit->document());
-       /* if(ui->tabWidget->widget(index)!=NULL){
+        /* if(ui->tabWidget->widget(index)!=NULL){
             CoCode* pTextEdit = NULL;
             QWidget* pWidget= ui->tabWidget->widget(index);
             pTextEdit = (CoCode*) pWidget;
@@ -245,4 +245,37 @@ void MainWindow::on_actionDiff_triggered()
 {
     DiffWindow *d = new DiffWindow;
     d->showMaximized();
+}
+
+void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
+{
+    QString fileName = index.data().toString();
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this,"Warning","Cannot open file : " + file.errorString());
+        return;
+    }
+    // setWindowTitle(fileName);
+    QTextStream in(&file);
+    QString text = in.readAll();
+    if (ui->tabWidget->count()!=0) {
+        ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+        pTextEdit = (CoCode*) pWidget;
+        pTextEdit->setPlainText(text);
+        highlighter->setDocument(pTextEdit->document());
+    } else {
+        // add tab
+        ui->tabWidget->addTab(new CoCode(), "untitled");
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
+        ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), fileName);
+        CoCode* pTextEdit = NULL;
+        QWidget* pWidget = ui->tabWidget->widget(ui->tabWidget->currentIndex());
+        pTextEdit = (CoCode*) pWidget;
+        pTextEdit->setPlainText(text);
+        highlighter->setDocument(pTextEdit->document());
+    }
+    file.close();
 }
