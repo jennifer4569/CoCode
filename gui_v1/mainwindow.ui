@@ -78,7 +78,7 @@
      <x>0</x>
      <y>0</y>
      <width>438</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -92,11 +92,9 @@
     <addaction name="actionOpen_File"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
-    <addaction name="actionPrint"/>
     <addaction name="actionExit"/>
     <addaction name="actionZoom_In"/>
     <addaction name="actionZoom_Out"/>
-    <addaction name="actionPush"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -145,7 +143,8 @@
    <addaction name="actionNew"/>
    <addaction name="actionOpen_File"/>
    <addaction name="actionSave"/>
-   <addaction name="actionPrint"/>
+   <addaction name="actionPush"/>
+   <addaction name="actionPull"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionNew">
@@ -187,18 +186,6 @@
   <action name="actionSave_As">
    <property name="text">
     <string>Save As</string>
-   </property>
-  </action>
-  <action name="actionPrint">
-   <property name="icon">
-    <iconset resource="resources.qrc">
-     <normaloff>:/img/print.png</normaloff>:/img/print.png</iconset>
-   </property>
-   <property name="text">
-    <string>Print</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionExit">
@@ -279,14 +266,27 @@
     <string>Ctrl+-</string>
    </property>
   </action>
+  <action name="actionDiff">
+   <property name="text">
+    <string>Diff</string>
+   </property>
+  </action>
   <action name="actionPush">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../../Downloads/push.png</normaloff>../../../Downloads/push.png</iconset>
+   </property>
    <property name="text">
     <string>Push</string>
    </property>
   </action>
-  <action name="actionDiff">
+  <action name="actionPull">
+   <property name="icon">
+    <iconset>
+     <normaloff>../../../Downloads/pull.png</normaloff>../../../Downloads/pull.png</iconset>
+   </property>
    <property name="text">
-    <string>Diff</string>
+    <string>Pull</string>
    </property>
   </action>
  </widget>
