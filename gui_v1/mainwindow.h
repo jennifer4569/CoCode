@@ -66,6 +66,8 @@ private slots:
 
     void on_treeView_doubleClicked(const QModelIndex &index);
 
+    void on_actionPull_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";

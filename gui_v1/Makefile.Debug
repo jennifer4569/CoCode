@@ -733,8 +733,7 @@ debug/moc_mainwindow.cpp: mainwindow.h \
 		C:/Qt/5.15.0/mingw81_64/include/QtCore/QPointer \
 		debug/moc_predefs.h \
 		C:/Qt/5.15.0/mingw81_64/bin/moc.exe
-	C:\Qt\5.15.0\mingw81_64\bin\moc.exe $(DEFINES) --include "C:/Users/Edward Lee/Documents/CoCodejj/gui_v1/debug/moc_predefs.h" -IC:/Qt/5.15.0/mingw81_64/mkspecs/win32-g++ -I"C:/Users/Edward Lee/Documents/CoCodejj/gui_v1" -IC:/Qt/5.15.0/mingw81_64/include -IC:/Qt/5.15.0/mingw81_64/include/QtPrintSupport -IC:/Qt/5.15.0/mingw81_64/include/QtWidgets -IC:/Qt/5.15.0/mingw81_64/include/QtGui -IC:/Qt/5.15.0/mingw81_64/include/QtANGLE -IC:/Qt/5.15.0/mingw81_64/include/QtCore -IC:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++ -IC:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/x86_64-w64-mingw32 -IC:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include/c++/backward -IC:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include -IC:/Qt/Tools/mingw810_64/lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed -IC:/Qt/Tools/mingw810_64/x86_64-w64-mingw32/include mainwindow.h -o debug\moc_mainwindow.cpp
-
+	
 debug/moc_syntax_highlighter.cpp: syntax_highlighter.h \
 		C:/Qt/5.15.0/mingw81_64/include/QtGui/QSyntaxHighlighter \
 		C:/Qt/5.15.0/mingw81_64/include/QtGui/qsyntaxhighlighter.h \

@@ -1,4 +1,6 @@
 *.exe
+!client_push.exe
+!client_pull.exe
 *.out
 
 *~

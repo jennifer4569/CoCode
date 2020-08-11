@@ -237,14 +237,6 @@ void MainWindow::on_actionZoom_Out_triggered()
     pTextEdit->zoomOut();
 }
 
-void MainWindow::on_actionPush_triggered()
-{
-    qInfo() << "pushing";
-    QProcess *process = new QProcess(this);
-    QString file("a.exe");
-    process->execute(file, QList<QString>()<< "test.txt" << "username" << "password" << ".");
-}
-
 void MainWindow::on_actionDiff_triggered()
 {
     DiffWindow *d = new DiffWindow;
@@ -290,4 +282,18 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
         highlighter->setDocument(pTextEdit->document());
     }
     file.close();
+}
+
+void MainWindow::on_actionPush_triggered()
+{
+    QProcess *process = new QProcess(this);
+    QString file("client_push.exe");
+    process->execute(file, QList<QString>()<< "test.txt" << "username" << "password" << ".");
+}
+
+void MainWindow::on_actionPull_triggered()
+{
+    QProcess *process = new QProcess(this);
+    QString file("client_pull.exe");
+    process->execute(file, QList<QString>()<< "test.txt" << "username" << "password" << ".");
 }
