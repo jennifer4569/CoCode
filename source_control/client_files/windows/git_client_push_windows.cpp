@@ -76,7 +76,9 @@ bool upload_file(const SOCKET sd, const std::string & filename, const std::strin
     buffer[n] = '\0';
 
     // Send the name of the file and the server directory
-    send(sd, filename.c_str(), filename.size(), 0);
+    std::string file = filename.substr(filename.find_last_of("/\\")+1);
+    std::cout << file << std::endl;
+    send(sd, file.c_str(), file.size(), 0);
     recv(sd, buffer, 1, 0);
 
     if (server_dir.back() != '/') strcpy(buffer, std::string(server_dir + '/').c_str());

@@ -25,7 +25,7 @@ int sockInit(void)
 		WSADATA wsa_data;
 		return WSAStartup(MAKEWORD(2,2), &wsa_data);
 	#else
-		return 0;
+		return -1;
 	#endif
 }
 
@@ -63,9 +63,11 @@ bool download_file(SOCKET sd, const std::string & filename, const std::string & 
 
     recv(sd, buffer, strlen("DOWNLOAD found"), 0);
 
-    // Next two lines will send the file name and directory.
-    assert(send(sd, filename.c_str(), filename.size(), 0) == filename.size());
-    assert(recv(sd, buffer, 1, 0) > 0);
+    // Send the name of the file and the server directory
+    std::string file = filename.substr(filename.find_last_of("/\\")+1);
+    std::cout << file << std::endl;
+    send(sd, file.c_str(), file.size(), 0);
+    recv(sd, buffer, 1, 0);
 
     if (dir.back() != '/') strcpy(buffer, std::string(dir + '/').c_str());
     else strcpy(buffer, dir.c_str());
@@ -135,7 +137,7 @@ int main(int argc, char * argv[])
     char buffer[BUFFER_SIZE];
     int winsock = sockInit();
 
-	if (winsock == 0)
+	if (winsock != 0)
 	{
 		std::cerr << "Program is not running on Windows!\n";
 		return EXIT_FAILURE;
