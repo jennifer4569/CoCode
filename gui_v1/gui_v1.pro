@@ -1,4 +1,4 @@
-QT       += core gui printsupport
+QT       += core gui sql printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     cocode.cpp \
     diffwindow.cpp \
+    login.cpp \
     main.cpp \
     mainwindow.cpp \
     syntax_highlighter.cpp
@@ -26,11 +27,13 @@ HEADERS += \
     cocode.h \
     diffwindow.h \
     linenumber.h \
+    login.h \
     mainwindow.h \
     syntax_highlighter.h
 
 FORMS += \
     diffwindow.ui \
+    login.ui \
     mainwindow.ui
 
 # Default rules for deployment.
