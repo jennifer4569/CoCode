@@ -1,12 +1,4 @@
 // git_client_pull_windows
-#include <iostream>
-#include <fstream>
-#include <string>
-
-#include <cassert>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 
 // Windows Headers
 /* See http://stackoverflow.com/questions/12765743/getaddrinfo-on-win32 */
@@ -15,6 +7,15 @@
 #endif
 #include <winsock2.h>
 #include <Ws2tcpip.h>
+
+#include <iostream>
+#include <fstream>
+#include <string>
+
+#include <cassert>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #define BUFFER_SIZE 1024
 
