@@ -48,17 +48,18 @@ void MainWindow::on_actionOpen_File_triggered()
 {
 //    QString fileName = QFileDialog::getOpenFileName(this, "Open this file");
     QUrl url = QFileDialog::getOpenFileUrl(this, "Open this file");
-    QString fileName = QDir::toNativeSeparators(url.toLocalFile());
+    QString fileName = url.fileName();
+    QString filePath = QDir::toNativeSeparators(url.toLocalFile());
 
     for (int i = 0; i < ui->tabWidget->count(); i++) {
-        if (ui->tabWidget->tabText(i) == fileName) {
+        if (ui->tabWidget->tabToolTip(i) == filePath) {
             ui->tabWidget->setCurrentIndex(i);
             return;
         }
     }
 
-    QFile file(fileName);
-    currentFile = fileName;
+    QFile file(filePath);
+    currentFile = filePath;
     if(!file.open(QIODevice::ReadOnly | QFile::Text)){
         QMessageBox::warning(this,"Warning","Cannot open file : " + file.errorString());
         return;
@@ -68,6 +69,7 @@ void MainWindow::on_actionOpen_File_triggered()
     QString text = in.readAll();
     if(ui->tabWidget->count()!=0){
         ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+        ui->tabWidget->setTabToolTip(ui->tabWidget->currentIndex(),filePath);
         CoCode* pTextEdit = NULL;
         QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
         pTextEdit = (CoCode*) pWidget;
@@ -79,6 +81,7 @@ void MainWindow::on_actionOpen_File_triggered()
         ui->tabWidget->addTab(new CoCode(),"untitled");
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+        ui->tabWidget->setTabToolTip(ui->tabWidget->currentIndex(),filePath);
         CoCode* pTextEdit = NULL;
         QWidget* pWidget= ui->tabWidget->widget(ui->tabWidget->currentIndex());
         pTextEdit = (CoCode*) pWidget;
@@ -263,17 +266,17 @@ void MainWindow::on_actionDiff_triggered()
 
 void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
 {
-//    QString fileName = index.data(Qt::DisplayRole).toString();
-    QString fileName = model->filePath(index);
-    qInfo() << fileName;
+    QString fileName = index.data(Qt::DisplayRole).toString();
+    QString filePath = model->filePath(index);
+//    qInfo() << filePath;
     for (int i = 0; i < ui->tabWidget->count(); i++) {
-        if (ui->tabWidget->tabText(i) == fileName) {
+        if (ui->tabWidget->tabToolTip(i) == filePath) {
             ui->tabWidget->setCurrentIndex(i);
             return;
         }
     }
-    QFile file(fileName);
-    currentFile = fileName;
+    QFile file(filePath);
+    currentFile = filePath;
     if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
         QMessageBox::warning(this,"Warning","Cannot open file : " + file.errorString());
         return;
@@ -285,6 +288,7 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
         ui->tabWidget->addTab(new CoCode(), "untitled");
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+        ui->tabWidget->setTabToolTip(ui->tabWidget->currentIndex(),filePath);
         CoCode* pTextEdit = NULL;
         QWidget* pWidget = ui->tabWidget->widget(ui->tabWidget->currentIndex());
         pTextEdit = (CoCode*) pWidget;
@@ -294,7 +298,8 @@ void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
         // add tab
         ui->tabWidget->addTab(new CoCode(), "untitled");
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
-        ui->tabWidget->setTabText(ui->tabWidget->currentIndex(), fileName);
+        ui->tabWidget->setTabText(ui->tabWidget->currentIndex(),fileName);
+        ui->tabWidget->setTabToolTip(ui->tabWidget->currentIndex(), filePath);
         CoCode* pTextEdit = NULL;
         QWidget* pWidget = ui->tabWidget->widget(ui->tabWidget->currentIndex());
         pTextEdit = (CoCode*) pWidget;
