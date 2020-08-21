@@ -1,10 +1,12 @@
 release/cocode.o
 release/diffwindow.o
+release/login.o
 release/main.o
 release/mainwindow.o
 release/syntax_highlighter.o
 release/qrc_resources.o
 release/moc_cocode.o
 release/moc_diffwindow.o
+release/moc_login.o
 release/moc_mainwindow.o
 release/moc_syntax_highlighter.o

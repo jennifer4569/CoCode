@@ -78,7 +78,7 @@
      <x>0</x>
      <y>0</y>
      <width>438</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -142,6 +142,7 @@
    </attribute>
    <addaction name="actionNew"/>
    <addaction name="actionOpen_File"/>
+   <addaction name="actionOpen_Folder"/>
    <addaction name="actionSave"/>
    <addaction name="actionPush"/>
    <addaction name="actionPull"/>
@@ -287,6 +288,11 @@
    </property>
    <property name="text">
     <string>Pull</string>
+   </property>
+  </action>
+  <action name="actionOpen_Folder">
+   <property name="text">
+    <string>Open Folder</string>
    </property>
   </action>
  </widget>

@@ -80,6 +80,16 @@ void MainWindow::on_actionOpen_File_triggered()
     file.close();
 }
 
+void MainWindow::on_actionOpen_Folder_triggered()
+{
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::DirectoryOnly);
+    dialog.setOption(QFileDialog::ShowDirsOnly, false);
+    dialog.exec();
+    QString dir = dialog.directory().absolutePath();
+    ui->treeView->setRootIndex(model->setRootPath(dir));
+}
+
 void MainWindow::on_actionSave_As_triggered()
 {
     QString fileName = QFileDialog::getSaveFileName(this, "Save as");

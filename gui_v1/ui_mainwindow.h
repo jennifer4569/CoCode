@@ -47,6 +47,7 @@ public:
     QAction *actionDiff;
     QAction *actionPush;
     QAction *actionPull;
+    QAction *actionOpen_Folder;
     QWidget *centralwidget;
     QHBoxLayout *horizontalLayout;
     QSplitter *splitter;
@@ -124,6 +125,8 @@ public:
         QIcon icon5;
         icon5.addFile(QString::fromUtf8("../../../Downloads/pull.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionPull->setIcon(icon5);
+        actionOpen_Folder = new QAction(MainWindow);
+        actionOpen_Folder->setObjectName(QString::fromUtf8("actionOpen_Folder"));
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -156,7 +159,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 438, 26));
+        menubar->setGeometry(QRect(0, 0, 438, 21));
         menuFile = new QMenu(menubar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         menuEdit = new QMenu(menubar);
@@ -200,6 +203,7 @@ public:
         menuTools->addAction(actionDiff);
         toolBar->addAction(actionNew);
         toolBar->addAction(actionOpen_File);
+        toolBar->addAction(actionOpen_Folder);
         toolBar->addAction(actionSave);
         toolBar->addAction(actionPush);
         toolBar->addAction(actionPull);
@@ -265,6 +269,7 @@ public:
         actionDiff->setText(QCoreApplication::translate("MainWindow", "Diff", nullptr));
         actionPush->setText(QCoreApplication::translate("MainWindow", "Push", nullptr));
         actionPull->setText(QCoreApplication::translate("MainWindow", "Pull", nullptr));
+        actionOpen_Folder->setText(QCoreApplication::translate("MainWindow", "Open Folder", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(tab), QCoreApplication::translate("MainWindow", "Tab 1", nullptr));
         menuFile->setTitle(QCoreApplication::translate("MainWindow", "File", nullptr));
         menuEdit->setTitle(QCoreApplication::translate("MainWindow", "Edit", nullptr));

@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     //if you want to open editor
     //change to: MainWindow w;
     login w;
-   // w.showMaximized();
+    // w.showMaximized();
     w.show();
     qInfo() << QDir::currentPath();
     return a.exec();

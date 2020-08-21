@@ -68,6 +68,8 @@ private slots:
 
     void on_actionPull_triggered();
 
+    void on_actionOpen_Folder_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";

@@ -1,10 +1,12 @@
 debug/cocode.o
 debug/diffwindow.o
+debug/login.o
 debug/main.o
 debug/mainwindow.o
 debug/syntax_highlighter.o
 debug/qrc_resources.o
 debug/moc_cocode.o
 debug/moc_diffwindow.o
+debug/moc_login.o
 debug/moc_mainwindow.o
 debug/moc_syntax_highlighter.o
