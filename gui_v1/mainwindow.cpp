@@ -23,8 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     model = new QFileSystemModel(this);
     model->setRootPath("C:/");
 
-    model->setFilter(QDir::Files);
-
     ui->treeView->setModel(model);
     ui->treeView->setRootIndex(model->setRootPath("./"));
 
@@ -48,7 +46,17 @@ void MainWindow::on_actionNew_triggered()
 
 void MainWindow::on_actionOpen_File_triggered()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, "Open this file");
+//    QString fileName = QFileDialog::getOpenFileName(this, "Open this file");
+    QUrl url = QFileDialog::getOpenFileUrl(this, "Open this file");
+    QString fileName = QDir::toNativeSeparators(url.toLocalFile());
+
+    for (int i = 0; i < ui->tabWidget->count(); i++) {
+        if (ui->tabWidget->tabText(i) == fileName) {
+            ui->tabWidget->setCurrentIndex(i);
+            return;
+        }
+    }
+
     QFile file(fileName);
     currentFile = fileName;
     if(!file.open(QIODevice::ReadOnly | QFile::Text)){
@@ -255,7 +263,9 @@ void MainWindow::on_actionDiff_triggered()
 
 void MainWindow::on_treeView_doubleClicked(const QModelIndex &index)
 {
-    QString fileName = index.data().toString();
+//    QString fileName = index.data(Qt::DisplayRole).toString();
+    QString fileName = model->filePath(index);
+    qInfo() << fileName;
     for (int i = 0; i < ui->tabWidget->count(); i++) {
         if (ui->tabWidget->tabText(i) == fileName) {
             ui->tabWidget->setCurrentIndex(i);
